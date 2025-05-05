@@ -8,19 +8,18 @@
 
 class RequestHandlerFactory;
 
-class RoomAdminRequestHandler : public IRequestHandler
+class RoomMemberRequestHandler : public IRequestHandler
 {
 public:
-    RoomAdminRequestHandler(const std::string& username, unsigned int roomId, RequestHandlerFactory& handlerFactory);
-    ~RoomAdminRequestHandler();
+    RoomMemberRequestHandler(const std::string& username, unsigned int roomId, RequestHandlerFactory& handlerFactory);
+    ~RoomMemberRequestHandler();
 
     virtual bool isRequestRelevant(const RequestInfo& request) override;
     virtual RequestResult handleRequest(const RequestInfo& request) override;
 
 private:
     // Handler methods for each request type
-    RequestResult closeRoom(const RequestInfo& request);
-    RequestResult startGame(const RequestInfo& request);
+    RequestResult leaveRoom(const RequestInfo& request);
     RequestResult getRoomState(const RequestInfo& request);
 
     std::string m_username;
