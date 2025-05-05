@@ -1,0 +1,23 @@
+﻿<Page x:Class="client_gui.Menu"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:client_gui"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Menu">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+            <TextBlock Text="Main Menu" FontSize="28" FontWeight="Bold" TextAlignment="Center" Margin="0 0 0 30"/>
+            <Button Content="Create Room" Height="50" Margin="0 0 0 15" Click="CreateRoom_Click"/>
+            <Button Content="Join Room" Height="50" Margin="0 0 0 15" Click="JoinRoom_Click"/>
+            <Button Content="Statistics" Height="50" Margin="0 0 0 15"/>
+            <Button Content="Exit" Height="50" Click="Exit_Click"/>
+            <Button Content="Add New Question" Width="200" Height="45" Margin="0,10,0,10" Click="AddQuestion_Click"/>
+            <Button Content="Head to Head Mode" Width="200" Height="45" Background="#FF5722" Foreground="White" Margin="0,10,0,10" Click="HeadToHead_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Page>

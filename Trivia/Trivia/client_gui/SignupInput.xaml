@@ -1,0 +1,65 @@
+﻿<Page x:Class="client_gui.SignupInput"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SignupInput">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="1" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" >
+                <TextBlock Text="Sign Up" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Username:" Margin="0,5,0,0"/>
+                <TextBox x:Name="UsernameBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>Username</TextBox.ToolTip>
+                </TextBox>
+
+                <TextBlock Text="Password:" Margin="0,5,0,0"/>
+                <PasswordBox x:Name="PasswordBox" Height="30" Margin="0,5">
+                    <PasswordBox.ToolTip>Password must have at least 8 characters with uppercase, lowercase, digit, and special character</PasswordBox.ToolTip>
+                </PasswordBox>
+
+                <TextBlock Text="Email:" Margin="0,5,0,0"/>
+                <TextBox x:Name="EmailBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>Email format: name@domain.com</TextBox.ToolTip>
+                </TextBox>
+
+                <TextBlock Text="Street:" Margin="0,5,0,0"/>
+                <TextBox x:Name="StreetBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>Street (letters only)</TextBox.ToolTip>
+                </TextBox>
+
+                <TextBlock Text="Apartment Number:" Margin="0,5,0,0"/>
+                <TextBox x:Name="AptNumberBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>Apartment number (digits only)</TextBox.ToolTip>
+                </TextBox>
+
+                <TextBlock Text="City:" Margin="0,5,0,0"/>
+                <TextBox x:Name="CityBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>City (letters only)</TextBox.ToolTip>
+                </TextBox>
+
+                <TextBlock Text="Phone:" Margin="0,5,0,0"/>
+                <TextBox x:Name="PhoneBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>Phone format: Starts with 0 followed by 2-3 digit prefix and 7 digits</TextBox.ToolTip>
+                </TextBox>
+
+                <TextBlock Text="Birth Date:" Margin="0,5,0,0"/>
+                <TextBox x:Name="BirthDateBox" Height="30" Margin="0,5">
+                    <TextBox.ToolTip>Format: dd/mm/yyyy</TextBox.ToolTip>
+                </TextBox>
+
+                <Button Content="Sign Up" Click="SignUp_Click" Height="35" Margin="0,10,0,20" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

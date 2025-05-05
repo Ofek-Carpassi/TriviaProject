@@ -1,0 +1,28 @@
+﻿<Page x:Class="client_gui.JoinRoom"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:client_gui"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="JoinRoom"
+      Unloaded="Page_Unloaded">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="500">
+            <TextBlock Text="Join a Room" FontSize="28" FontWeight="Bold" TextAlignment="Center" Margin="0 0 0 20"/>
+
+            <ListBox x:Name="RoomsListBox" Height="200" Margin="0 0 0 20">
+                <!-- Example item, filled programmatically -->
+                <ListBoxItem>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0 5">
+                        <TextBlock Text="Room 1 (3/6 players)" Width="350" VerticalAlignment="Center"/>
+                        <Button Content="Join" Width="100"/>
+                    </StackPanel>
+                </ListBoxItem>
+            </ListBox>
+
+        </StackPanel>
+    </Grid>
+</Page>

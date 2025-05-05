@@ -1,0 +1,57 @@
+﻿<Page x:Class="client_gui.HighScores"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:client_gui"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="HighScores">
+
+    <Grid Background="#F0F0F0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" 
+                   Text="High Scores" 
+                   FontSize="36" 
+                   FontWeight="Bold" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,20,0,20"/>
+
+        <!-- Scores List -->
+        <ListView Grid.Row="1" 
+                  ItemsSource="{Binding TopScores}"
+                  Margin="20"
+                  BorderThickness="0"
+                  Background="Transparent">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" 
+                                  Text="{Binding Rank}"
+                                  FontSize="20" 
+                                  Margin="0,0,20,0"/>
+
+                        <TextBlock Grid.Column="1" 
+                                  Text="{Binding PlayerName}" 
+                                  FontSize="20"/>
+
+                        <TextBlock Grid.Column="2" 
+                                  Text="{Binding Score}" 
+                                  FontSize="20"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>
