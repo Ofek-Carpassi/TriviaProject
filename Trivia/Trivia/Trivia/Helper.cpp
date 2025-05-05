@@ -1,4 +1,4 @@
-#include "Helper.hpp"
+#include "Helper.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -94,4 +94,3 @@ std::string Helper::getPartFromSocket(const SOCKET sc, const int bytesNum, const
 	delete[] data;
 	return received;
 }
-

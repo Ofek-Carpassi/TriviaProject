@@ -1,4 +1,4 @@
-#include "WSAInitializer.hpp"
+#include "WSAInitializer.h"
 #include <exception>
 
 
@@ -25,4 +25,3 @@ WSAInitializer::~WSAInitializer()
 	}
 	catch (...) {}
 }
-

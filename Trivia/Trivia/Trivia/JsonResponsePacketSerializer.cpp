@@ -1,6 +1,6 @@
-#include "JsonResponsePacketSerializer.hpp"
+#include "JsonResponsePacketSerializer.h"
 #include "json.hpp"  // Include the JSON library
-#include "messageCodes.hpp"
+#include "messageCodes.h"
 
 using json = nlohmann::json;
 
@@ -556,4 +556,3 @@ Buffer JsonResponsePacketSerializer::serializeGetQuestionResponse(GetQuestionRes
 
     return ret_val;
 }
-

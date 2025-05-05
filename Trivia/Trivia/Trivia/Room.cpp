@@ -1,4 +1,4 @@
-#include "Room.hpp"
+#include "Room.h"
 #include <algorithm>
 
 Room::Room(unsigned int id, const std::string& roomName, unsigned int maxPlayers, unsigned int timePerQuestion, const std::string& creator)
@@ -69,4 +69,3 @@ void Room::setState(RoomState state)
 {
     m_metadata.state = state;
 }
-

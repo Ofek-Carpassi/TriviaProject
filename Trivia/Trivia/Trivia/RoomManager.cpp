@@ -1,4 +1,4 @@
-#include "RoomManager.hpp"
+#include "RoomManager.h"
 
 RoomManager::RoomManager() : m_nextRoomId(1)
 {
@@ -62,4 +62,3 @@ RoomState RoomManager::getRoomState(unsigned int roomId) const
     // return WAITING as a default if room not found
     return RoomState::WAITING;
 }
-

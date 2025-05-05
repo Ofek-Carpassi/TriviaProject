@@ -1,7 +1,7 @@
-#include "MenuRequestHandler.hpp"
-#include "JsonRequestPacketDeserializer.hpp"
-#include "JsonResponsePacketSerializer.hpp"
-#include "messageCodes.hpp"
+#include "MenuRequestHandler.h"
+#include "JsonRequestPacketDeserializer.h"
+#include "JsonResponsePacketSerializer.h"
+#include "messageCodes.h"
 #include <iostream>
 MenuRequestHandler::MenuRequestHandler(const std::string& username, RequestHandlerFactory& handlerFactory)
     : m_username(username), m_handlerFactory(handlerFactory)
@@ -538,4 +538,3 @@ RequestResult MenuRequestHandler::leaveRoom(const RequestInfo& request)
         return result;
     }
 }
-

@@ -1,5 +1,5 @@
-#include "RoomMemberRequestHandler.hpp"
-#include "JsonResponsePacketSerializer.hpp"
+#include "RoomMemberRequestHandler.h"
+#include "JsonResponsePacketSerializer.h"
 #include <algorithm>
 #include <iostream>
 
@@ -134,4 +134,3 @@ RequestResult RoomMemberRequestHandler::getRoomState(const RequestInfo& request)
         return result;
     }
 }
-

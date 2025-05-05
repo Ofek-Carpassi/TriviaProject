@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "Server.h"
 #include <iostream>
 #include <string>
 
@@ -51,4 +51,3 @@ void Server::handleConsoleInput()
         }
     }
 }
-
