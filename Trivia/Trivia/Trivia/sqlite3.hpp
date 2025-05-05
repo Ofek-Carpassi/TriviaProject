@@ -32,7 +32,7 @@
 */
 #ifndef SQLITE3_H
 #define SQLITE3_H
-#include <stdarg.h>     /* Needed for the definition of va_list */
+#include <stdarg.hpp>     /* Needed for the definition of va_list */
 
 /*
 ** Make sure we can call this stuff from C++.
@@ -13713,3 +13713,4 @@ struct fts5_api {
 
 /******** End of fts5.h *********/
 #endif /* SQLITE3_H */
+

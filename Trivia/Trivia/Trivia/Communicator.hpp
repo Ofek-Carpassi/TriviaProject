@@ -1,15 +1,15 @@
 #pragma once
 
-#include <WinSock2.h>
-#include <Windows.h>
+#include <WinSock2.hpp>
+#include <Windows.hpp>
 #include <thread>
 #include <map>
 #include <mutex>
-#include "IRequestHandler.h"
-#include "RequestInfo.h"
-#include "Helper.h"
-#include "JsonRequestPacketDeserializer.h"
-#include "JsonResponsePacketSerializer.h"
+#include "IRequestHandler.hpp"
+#include "RequestInfo.hpp"
+#include "Helper.hpp"
+#include "JsonRequestPacketDeserializer.hpp"
+#include "JsonResponsePacketSerializer.hpp"
 
 class RequestHandlerFactory;
 
@@ -38,3 +38,4 @@ private:
     std::mutex m_mutex;
     bool m_running;
 };
+

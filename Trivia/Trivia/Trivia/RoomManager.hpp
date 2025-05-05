@@ -2,7 +2,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "Room.h"
+#include "Room.hpp"
 
 class RoomManager
 {
@@ -23,3 +23,4 @@ private:
     std::map<unsigned int, Room*> m_rooms;
     unsigned int m_nextRoomId;
 };
+

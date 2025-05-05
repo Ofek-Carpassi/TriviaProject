@@ -1,5 +1,5 @@
 // OTPCryptoAlgorithm.cpp
-#include "OTPCryptoAlgorithm.h"
+#include "OTPCryptoAlgorithm.hpp"
 #include <iostream>
 #include <random>
 #include <algorithm>
@@ -125,3 +125,4 @@ std::string OTPCryptoAlgorithm::performXOR(const std::string& message, size_t st
 
     return result;
 }
+

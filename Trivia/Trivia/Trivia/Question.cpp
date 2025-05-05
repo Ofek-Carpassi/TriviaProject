@@ -1,4 +1,4 @@
-#include "Question.h"
+#include "Question.hpp"
 
 Question::Question(string question, wordList possibleAnswers, int correctAnswerId)  :
     m_question(question), m_possibleAnswers(possibleAnswers), m_id_correct_answer(correctAnswerId) {
@@ -15,3 +15,4 @@ wordList Question::getPossibleAnswers() {
 int Question::getCorrectAnswerId() {
     return this->m_id_correct_answer;
 }
+

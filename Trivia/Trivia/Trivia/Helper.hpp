@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include <WinSock2.h>
+#include <WinSock2.hpp>
 
 
 enum MessageType : byte
@@ -35,7 +35,7 @@ private:
 
 
 #ifdef _DEBUG // vs add this define in debug mode
-#include <stdio.h>
+#include <stdio.hpp>
 // Q: why do we need traces ?
 // A: traces are a nice and easy way to detect bugs without even debugging
 // or to understand what happened in case we miss the bug in the first time
@@ -48,3 +48,4 @@ private:
 #define TRACE(msg, ...) printf(msg "\n", __VA_ARGS__);
 #define TRACE(msg, ...) // do nothing
 #endif
+

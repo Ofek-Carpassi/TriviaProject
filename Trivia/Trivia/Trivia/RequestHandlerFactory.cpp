@@ -1,6 +1,6 @@
-#include "RequestHandlerFactory.h"
-#include "RoomAdminRequestHandler.h"
-#include "RoomMemberRequestHandler.h"
+#include "RequestHandlerFactory.hpp"
+#include "RoomAdminRequestHandler.hpp"
+#include "RoomMemberRequestHandler.hpp"
 
 RequestHandlerFactory::RequestHandlerFactory(IDatabase* database) :
     m_database(database),
@@ -63,3 +63,4 @@ GameManager& RequestHandlerFactory::getGameManager()
 {
     return m_gameManager;
 }
+

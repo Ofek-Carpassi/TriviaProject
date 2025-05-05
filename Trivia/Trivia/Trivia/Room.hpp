@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "RoomData.h"
+#include "RoomData.hpp"
 
 class Room
 {
@@ -24,3 +24,4 @@ private:
     RoomData m_metadata;
     std::vector<std::string> m_users;
 };
+

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <WinSock2.h>
-#include <Windows.h>
+#include <WinSock2.hpp>
+#include <Windows.hpp>
 
 // Q: why do we need this class ?
 // A: this class is made to make sure we init the WSA and free it at the end
@@ -15,4 +15,5 @@ public:
 	WSAInitializer();
 	~WSAInitializer();
 };
+
 

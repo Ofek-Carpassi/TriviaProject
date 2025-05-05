@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "ResponseStructs.h"
+#include "ResponseStructs.hpp"
 
 typedef unsigned char Byte;
 typedef std::vector<Byte> Buffer;
@@ -27,3 +27,4 @@ public:
     static Buffer serializeGetQuestionResponse(GetQuestionResponse msg);
     static Buffer serializeLeaveGameResponse(LeaveGameResponse msg);
 };
+

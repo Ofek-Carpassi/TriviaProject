@@ -1,4 +1,4 @@
-#include "UserValidator.h"
+#include "UserValidator.hpp"
 #include <regex>
 
 bool UserValidator::isValidPassword(const std::string& password) {
@@ -42,3 +42,4 @@ bool UserValidator::isValidBirthDate(const std::string& birthDate) {
     std::regex dateRegex("^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\\d{4}$");
     return std::regex_match(birthDate, dateRegex);
 }
+

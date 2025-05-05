@@ -1,6 +1,6 @@
 #pragma once
-#include "IDatabase.h"
-#include "ResponseStructs.h"
+#include "IDatabase.hpp"
+#include "ResponseStructs.hpp"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -20,3 +20,4 @@ public:
 private:
     IDatabase* m_database;
 };
+

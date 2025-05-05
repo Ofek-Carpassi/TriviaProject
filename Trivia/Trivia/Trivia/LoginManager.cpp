@@ -1,4 +1,4 @@
-#include "LoginManager.h"
+#include "LoginManager.hpp"
 #include <iostream>
 
 LoginManager::LoginManager(IDatabase* database) : m_database(database)
@@ -70,4 +70,5 @@ void LoginManager::logout(std::string username)
         }
     }
 }
+
 

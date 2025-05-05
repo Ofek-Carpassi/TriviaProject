@@ -1,4 +1,4 @@
-#include "GameManager.h"
+#include "GameManager.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -227,3 +227,4 @@ void GameManager::updateGameFinishedStatus(unsigned int roomId)
         std::cout << "Game in room " << roomId << " has finished!" << std::endl;
     }
 }
+

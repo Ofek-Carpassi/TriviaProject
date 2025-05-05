@@ -1,8 +1,8 @@
-#include "LoginRequestHandler.h"
-#include "JsonResponsePacketSerializer.h"
-#include "JsonRequestPacketDeserializer.h"
-#include "RequestStructs.h"
-#include "ResponseStructs.h"
+#include "LoginRequestHandler.hpp"
+#include "JsonResponsePacketSerializer.hpp"
+#include "JsonRequestPacketDeserializer.hpp"
+#include "RequestStructs.hpp"
+#include "ResponseStructs.hpp"
 #include <exception>
 
 LoginRequestHandler::LoginRequestHandler(LoginManager& loginManager, RequestHandlerFactory& handlerFactory) :
@@ -125,3 +125,4 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& request)
         return result;
     }
 }
+

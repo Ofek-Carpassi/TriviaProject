@@ -1,4 +1,4 @@
-#include "StatisticsManager.h"
+#include "StatisticsManager.hpp"
 
 StatisticsManager::StatisticsManager(IDatabase* database) : m_database(database)
 {
@@ -60,3 +60,4 @@ std::vector<PlayerStatisticsResponse> StatisticsManager::getHighScores()
 
     return highScores;
 }
+

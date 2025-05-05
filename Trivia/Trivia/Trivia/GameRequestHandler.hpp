@@ -1,9 +1,9 @@
 #pragma once
-#include "IRequestHandler.h"
-#include "RequestHandlerFactory.h"
-#include "RequestStructs.h"
-#include "ResponseStructs.h"
-#include "messageCodes.h"
+#include "IRequestHandler.hpp"
+#include "RequestHandlerFactory.hpp"
+#include "RequestStructs.hpp"
+#include "ResponseStructs.hpp"
+#include "messageCodes.hpp"
 #include <string>
 
 class RequestHandlerFactory;
@@ -28,3 +28,4 @@ private:
     unsigned int m_roomId;
     RequestHandlerFactory& m_handlerFactory;
 };
+

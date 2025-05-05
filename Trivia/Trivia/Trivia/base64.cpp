@@ -31,7 +31,7 @@
 
 */
 
-#include "base64.h"
+#include "base64.hpp"
 
 #include <algorithm>
 #include <stdexcept>
@@ -280,3 +280,4 @@ std::string base64_decode(std::string_view s, bool remove_linebreaks) {
 }
 
 #endif  // __cplusplus >= 201703L
+

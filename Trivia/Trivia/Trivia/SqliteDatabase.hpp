@@ -1,8 +1,8 @@
 #pragma once
-#include "IDatabase.h"
-#include "sqlite3.h"
+#include "IDatabase.hpp"
+#include "sqlite3.hpp"
 #include <string>
-#include "UserValidator.h"
+#include "UserValidator.hpp"
 
 class SqliteDatabase : public IDatabase
 {
@@ -32,3 +32,4 @@ private:
     sqlite3* m_db;
     std::string m_dbFileName;
 };
+

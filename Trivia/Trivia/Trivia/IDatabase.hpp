@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Question.h"
+#include "Question.hpp"
 
 class IDatabase
 {
@@ -28,3 +28,4 @@ public:
     virtual bool saveUserCryptoKey(const std::string& userId, const std::string& key, size_t position) = 0;
     virtual bool getUserCryptoKey(const std::string& userId, std::string& keyOut, size_t& positionOut) = 0;
 };
+

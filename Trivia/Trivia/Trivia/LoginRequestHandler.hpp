@@ -1,7 +1,7 @@
 #pragma once
-#include "IRequestHandler.h"
-#include "LoginManager.h"
-#include "RequestHandlerFactory.h"
+#include "IRequestHandler.hpp"
+#include "LoginManager.hpp"
+#include "RequestHandlerFactory.hpp"
 
 class RequestHandlerFactory;
 
@@ -21,3 +21,4 @@ private:
     LoginManager& m_loginManager;
     RequestHandlerFactory& m_handlerFactory;
 };
+

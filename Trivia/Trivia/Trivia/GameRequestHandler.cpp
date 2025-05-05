@@ -1,6 +1,6 @@
-#include "GameRequestHandler.h"
-#include "JsonRequestPacketDeserializer.h"
-#include "JsonResponsePacketSerializer.h"
+#include "GameRequestHandler.hpp"
+#include "JsonRequestPacketDeserializer.hpp"
+#include "JsonResponsePacketSerializer.hpp"
 #include <algorithm>
 #include <iostream>
 
@@ -177,3 +177,4 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& request)
         return result;
     }
 }
+

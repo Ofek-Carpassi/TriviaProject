@@ -1,6 +1,6 @@
-#include "Communicator.h"
-#include "RequestHandlerFactory.h"
-#include "Helper.h"
+#include "Communicator.hpp"
+#include "RequestHandlerFactory.hpp"
+#include "Helper.hpp"
 #include <iostream>
 #include <string>
 
@@ -289,3 +289,4 @@ void Communicator::close()
     }
     m_clients.clear();
 }
+

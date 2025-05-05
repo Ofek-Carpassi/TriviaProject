@@ -1,7 +1,7 @@
 #pragma once
-#include "IDatabase.h"
-#include "Room.h"
-#include "ResponseStructs.h"
+#include "IDatabase.hpp"
+#include "Room.hpp"
+#include "ResponseStructs.hpp"
 #include <string>
 #include <map>
 #include <vector>
@@ -60,3 +60,4 @@ private:
     // Update game finished status for a room
     void updateGameFinishedStatus(unsigned int roomId);
 };
+

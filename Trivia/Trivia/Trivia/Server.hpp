@@ -1,7 +1,7 @@
 #pragma once
-#include "Communicator.h"
-#include "RequestHandlerFactory.h"
-#include "SqliteDatabase.h"
+#include "Communicator.hpp"
+#include "RequestHandlerFactory.hpp"
+#include "SqliteDatabase.hpp"
 #include <thread>
 
 class Server
@@ -20,3 +20,4 @@ private:
     Communicator m_communicator;
     bool m_running;
 };
+

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "RequestInfo.h"
-#include "ResponseStructs.h"
-#include "RequestStructs.h"
+#include "RequestInfo.hpp"
+#include "ResponseStructs.hpp"
+#include "RequestStructs.hpp"
 
 class JsonRequestPacketDeserializer
 {
@@ -24,3 +24,4 @@ public:
 private:
 	static std::string bufferToString(const Buffer& buffer);
 };
+

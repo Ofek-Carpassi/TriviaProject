@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RequestInfo.h"
-#include "ResponseStructs.h"
+#include "RequestInfo.hpp"
+#include "ResponseStructs.hpp"
 
 class IRequestHandler;
 
@@ -18,3 +18,4 @@ public:
 	virtual bool isRequestRelevant(const RequestInfo& request) = 0;
 	virtual RequestResult handleRequest(const RequestInfo& request) = 0;
 };
+

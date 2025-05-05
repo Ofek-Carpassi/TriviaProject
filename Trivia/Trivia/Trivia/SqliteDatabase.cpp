@@ -1,6 +1,6 @@
-#include "SqliteDatabase.h"
+#include "SqliteDatabase.hpp"
 #include <iostream>
-#include <io.h>
+#include <io.hpp>
 #include <string>
 
 // Callback function to check if a record exists
@@ -512,3 +512,4 @@ bool SqliteDatabase::getUserCryptoKey(const std::string& userId, std::string& ke
         return false;
     }
 }
+

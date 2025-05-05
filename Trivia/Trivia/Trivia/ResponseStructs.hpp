@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "RoomData.h"
+#include "RoomData.hpp"
 #include <map>
 
 // base response structure
@@ -80,3 +80,4 @@ typedef struct LeaveGameResponse
 {
     unsigned int status = 0;
 } LeaveGameResponse;
+

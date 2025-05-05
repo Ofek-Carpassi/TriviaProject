@@ -1,7 +1,7 @@
 #pragma once
-#include "SqliteDatabase.h"
-#include "LoggedUser.h"
-#include "IDatabase.h"
+#include "SqliteDatabase.hpp"
+#include "LoggedUser.hpp"
+#include "IDatabase.hpp"
 #include <vector>
 
 class LoginManager
@@ -18,3 +18,4 @@ private:
 	IDatabase* m_database;
 	std::vector<LoggedUser> m_loggedUsers;
 };
+

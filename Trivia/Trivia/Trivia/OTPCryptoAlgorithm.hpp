@@ -1,7 +1,7 @@
 // OTPCryptoAlgorithm.h
 #pragma once
-#include "CryptoAlgorithm.h"
-#include "IDatabase.h"
+#include "CryptoAlgorithm.hpp"
+#include "IDatabase.hpp"
 #include <string>
 #include <vector>
 #include <random>
@@ -36,3 +36,4 @@ private:
     bool saveKeyToDatabase();
     std::string performXOR(const std::string& message, size_t startPosition);
 };
+

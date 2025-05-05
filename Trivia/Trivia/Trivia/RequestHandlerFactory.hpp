@@ -1,15 +1,15 @@
 #pragma once
-#include "IRequestHandler.h"
-#include "LoginRequestHandler.h"
-#include "MenuRequestHandler.h"
-#include "RoomAdminRequestHandler.h"
-#include "RoomMemberRequestHandler.h"
-#include "GameRequestHandler.h"
-#include "SqliteDatabase.h"
-#include "LoginManager.h"
-#include "RoomManager.h"
-#include "StatisticsManager.h"
-#include "GameManager.h"
+#include "IRequestHandler.hpp"
+#include "LoginRequestHandler.hpp"
+#include "MenuRequestHandler.hpp"
+#include "RoomAdminRequestHandler.hpp"
+#include "RoomMemberRequestHandler.hpp"
+#include "GameRequestHandler.hpp"
+#include "SqliteDatabase.hpp"
+#include "LoginManager.hpp"
+#include "RoomManager.hpp"
+#include "StatisticsManager.hpp"
+#include "GameManager.hpp"
 #include <string>
 
 class LoginRequestHandler;
@@ -44,3 +44,4 @@ private:
     StatisticsManager m_statisticsManager;
     GameManager m_gameManager;
 };
+

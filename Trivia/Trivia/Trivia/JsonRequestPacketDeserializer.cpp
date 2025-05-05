@@ -1,4 +1,4 @@
-#include "JsonRequestPacketDeserializer.h"
+#include "JsonRequestPacketDeserializer.hpp"
 #include "json.hpp"
 #include <iostream>
 
@@ -126,3 +126,4 @@ GetGameResultsRequest JsonRequestPacketDeserializer::deserializeGetGameResultsRe
     // The server knows which game the user is in
     return GetGameResultsRequest();
 }
+
