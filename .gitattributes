@@ -1,1 +1,9 @@
-* linguist-language=C++
+# Force GitHub to detect .cpp and .hpp as C++ files
+*.cpp linguist-language=C++
+*.hpp linguist-language=C++
+
+# Explicitly mark your Python files
+*.py linguist-language=Python
+
+# Explicitly mark your C# files
+*.cs linguist-language=CSharp
