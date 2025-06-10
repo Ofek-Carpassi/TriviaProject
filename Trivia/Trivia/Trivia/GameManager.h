@@ -14,6 +14,7 @@ struct PlayerGameData
     unsigned int currentQuestionIndex{ 0 };
     unsigned int totalQuestions{ 0 };
     Question currentQuestion;
+    std::vector<Question> questions; // Add this field to store all questions
     unsigned int correctAnswerCount{ 0 };
     unsigned int wrongAnswerCount{ 0 };
     float totalAnswerTime{ 0.0f };

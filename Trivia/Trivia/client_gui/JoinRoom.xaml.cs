@@ -21,32 +21,20 @@ namespace client_gui
             InitializeComponent();
             Console.WriteLine("JoinRoom page initialized");
 
-            // Create a refresh button
-            var refreshButton = new Button
-            {
-                Content = "Refresh Room List",
-                Margin = new Thickness(0, 0, 0, 20),
-                Padding = new Thickness(10, 5, 10, 5),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            refreshButton.Click += (s, e) => RefreshRoomList();
-
             // Clear the example item
             RoomsListBox.Items.Clear();
-
-            // Add button to the StackPanel right before the ListBox
-            var parentStackPanel = RoomsListBox.Parent as StackPanel;
-            if (parentStackPanel != null)
-            {
-                int listBoxIndex = parentStackPanel.Children.IndexOf(RoomsListBox);
-                parentStackPanel.Children.Insert(listBoxIndex, refreshButton);
-            }
 
             // Initial refresh
             RefreshRoomList();
 
             // Start background updater
             StartRoomUpdaterThread();
+        }
+
+        // ADD THIS METHOD - This is what the XAML button is looking for
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshRoomList();
         }
 
         private void RefreshRoomList()
@@ -130,10 +118,47 @@ namespace client_gui
 
                 if (roomsResp.Rooms == null || roomsResp.Rooms.Count == 0)
                 {
-                    // Show a message if there are no rooms
+                    // Show a modern "no rooms" message
+                    var noRoomsPanel = new StackPanel
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Margin = new Thickness(0, 50, 0, 0)
+                    };
+
+                    var icon = new TextBlock
+                    {
+                        Text = "🏠",
+                        FontSize = 48,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 0, 0, 20)
+                    };
+
+                    var message = new TextBlock
+                    {
+                        Text = "No active rooms available",
+                        FontSize = 18,
+                        FontWeight = FontWeights.Medium,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 0, 0, 10)
+                    };
+
+                    var subMessage = new TextBlock
+                    {
+                        Text = "Create a new room to start playing!",
+                        FontSize = 14,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Foreground = System.Windows.Media.Brushes.Gray
+                    };
+
+                    noRoomsPanel.Children.Add(icon);
+                    noRoomsPanel.Children.Add(message);
+                    noRoomsPanel.Children.Add(subMessage);
+
                     var noRoomsItem = new ListBoxItem
                     {
-                        Content = "No active rooms available. Create a new room!"
+                        Content = noRoomsPanel,
+                        IsEnabled = false
                     };
                     RoomsListBox.Items.Add(noRoomsItem);
                 }
@@ -156,43 +181,92 @@ namespace client_gui
         {
             try
             {
-                var panel = new StackPanel
+                // Create a modern room card
+                var mainGrid = new Grid
                 {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Margin = new Thickness(0, 5, 0, 5)
+                };
+
+                mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                // Room info panel
+                var infoPanel = new StackPanel
+                {
+                    VerticalAlignment = VerticalAlignment.Center
                 };
 
                 // Get number of players in the room
                 int playerCount = GetPlayerCount(room.id);
-                string roomStateText = room.isActive ? "Active" : "Waiting";
-                string roomInfo = $"{room.name} ({playerCount}/{room.maxPlayers} players) - {roomStateText}";
+                string roomStateText = room.isActive ? "🎮 Game In Progress" : "⏳ Waiting for Players";
 
-                var roomInfoText = new TextBlock
+                var roomNameText = new TextBlock
                 {
-                    Text = roomInfo,
-                    Width = 350,
-                    VerticalAlignment = VerticalAlignment.Center
+                    Text = $"🏠 {room.name}",
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(0, 0, 0, 5),
+                    Foreground = (System.Windows.Media.Brush)FindResource("TextPrimaryBrush")
                 };
 
+                var roomDetailsText = new TextBlock
+                {
+                    Text = $"👥 {playerCount}/{room.maxPlayers} players • {roomStateText}",
+                    FontSize = 12,
+                    Foreground = (System.Windows.Media.Brush)FindResource("TextSecondaryBrush")
+                };
+
+                infoPanel.Children.Add(roomNameText);
+                infoPanel.Children.Add(roomDetailsText);
+
+                // Join button with modern styling
                 int roomId = room.id;
                 var joinButton = new Button
                 {
-                    Content = room.isActive ? "Game In Progress" : "Join",
-                    Width = 100,
-                    IsEnabled = !room.isActive && playerCount < room.maxPlayers
+                    Content = room.isActive ? "In Progress" : "Join Room",
+                    Width = 120,
+                    Height = 40, // Increase height slightly
+                    IsEnabled = !room.isActive && playerCount < room.maxPlayers,
+                    Margin = new Thickness(10, 0, 0, 0),
+                    FontSize = 13, // Slightly smaller font
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    Padding = new Thickness(8, 6, 8, 6) // Better padding
                 };
 
-                // Add a direct click handler as a lambda function
+                // Apply the modern button style from resources
+                if (room.isActive)
+                {
+                    // Game in progress - use disabled style
+                    joinButton.Style = (Style)FindResource("ModernButtonStyle");
+                    joinButton.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(243, 156, 18)); // Orange
+                    joinButton.Foreground = System.Windows.Media.Brushes.White;
+                }
+                else if (playerCount >= room.maxPlayers)
+                {
+                    // Room full - use danger style
+                    joinButton.Content = "Full";
+                    joinButton.Style = (Style)FindResource("DangerButtonStyle");
+                }
+                else
+                {
+                    // Available room - use primary style
+                    joinButton.Style = (Style)FindResource("ModernButtonStyle");
+                }
+
+                // Add click handler
                 joinButton.Click += (sender, args) =>
                 {
                     JoinRoom_Click(roomId);
                 };
 
-                panel.Children.Add(roomInfoText);
-                panel.Children.Add(joinButton);
+                Grid.SetColumn(infoPanel, 0);
+                Grid.SetColumn(joinButton, 1);
 
-                var item = new ListBoxItem { Content = panel };
+                mainGrid.Children.Add(infoPanel);
+                mainGrid.Children.Add(joinButton);
+
+                var item = new ListBoxItem { Content = mainGrid };
                 RoomsListBox.Items.Add(item);
             }
             catch (Exception ex)
@@ -200,7 +274,6 @@ namespace client_gui
                 Console.WriteLine($"Error adding room to UI: {ex.Message}");
             }
         }
-
         private int GetPlayerCount(int roomId)
         {
             try
@@ -237,9 +310,6 @@ namespace client_gui
             try
             {
                 Console.WriteLine($"JOIN BUTTON CLICKED - Joining room with ID: {roomId}");
-
-                // Show immediate feedback
-                MessageBox.Show($"Attempting to join room {roomId}", "Join Room", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 var joinData = new { roomId };
                 string jsonString = JsonConvert.SerializeObject(joinData);
@@ -313,6 +383,12 @@ namespace client_gui
 
             _roomUpdaterThread.IsBackground = true;
             _roomUpdaterThread.Start();
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Navigate back to the menu
+            NavigationService?.Navigate(new Menu());
         }
 
         // Stop thread when page is unloaded

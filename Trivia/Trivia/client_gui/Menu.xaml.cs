@@ -39,6 +39,19 @@ namespace client_gui
             }
         }
 
+        private void Statistics_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                NavigationService?.Navigate(new Statistics());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error navigating to statistics: {ex.Message}");
+                MessageBox.Show("Error opening statistics page.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void JoinRoom_Click(object sender, RoutedEventArgs e)
         {
             // Navigate to JoinRoom page

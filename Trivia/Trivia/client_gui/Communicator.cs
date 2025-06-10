@@ -40,7 +40,6 @@ namespace client_gui
                         catch { /* Ignore errors during cleanup */ }
                     }
 
-                    Console.WriteLine("Connecting to server...");
                     socket_m = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                     // Set reasonable timeouts
@@ -51,19 +50,16 @@ namespace client_gui
                     try
                     {
                         socket_m.Connect(IPAddress.Parse(SERVER_IP), SERVER_PORT);
-                        Console.WriteLine("Connected successfully!");
                         isInitialized = true;
                     }
                     catch (SocketException se)
                     {
-                        Console.WriteLine($"Socket error: {se.SocketErrorCode} - {se.Message}");
                         throw;
                     }
                 }
                 catch (Exception ex)
                 {
                     isInitialized = false;
-                    Console.WriteLine($"Connection failed: {ex.Message}");
                     throw new Exception($"Failed to connect to server: {ex.Message}");
                 }
             }
@@ -78,14 +74,12 @@ namespace client_gui
                 {
                     if (!isInitialized || socket_m == null || !socket_m.Connected)
                     {
-                        Console.WriteLine("Socket not connected, reinitializing...");
                         InitializeSocket();
                     }
 
                     // Check for null again after possible reinitialization
                     if (socket_m != null && socket_m.Connected)
                     {
-                        Console.WriteLine($"Sending {data.Length} bytes");
                         socket_m.Send(data);
                     }
                     else
@@ -96,7 +90,6 @@ namespace client_gui
                 catch (Exception ex)
                 {
                     isInitialized = false;
-                    Console.WriteLine($"Send error: {ex.GetType().Name} - {ex.Message}");
                     throw new Exception($"Send error: {ex.Message}", ex);
                 }
             }
@@ -107,33 +100,19 @@ namespace client_gui
         {
             lock (socketLock)
             {
+                if (!isInitialized)
+                    InitializeSocket();
+
                 try
                 {
-                    if (!isInitialized || socket_m == null || !socket_m.Connected)
-                    {
-                        InitializeSocket();
-                    }
+                    // Receive status code
+                    byte status = ReceiveExact(1)[0];
 
-                    // Check for null
-                    if (socket_m == null)
-                    {
-                        throw new Exception("Socket is null after initialization attempt");
-                    }
-
-                    // Read 1 byte status
-                    byte[] statusBuffer = ReceiveExact(1);
-                    byte status = statusBuffer[0];
-
-                    // Read 4 bytes length
+                    // Receive message length
                     byte[] lengthBuffer = ReceiveExact(4);
+                    int length = (lengthBuffer[0] << 24) | (lengthBuffer[1] << 16) |
+                                 (lengthBuffer[2] << 8) | lengthBuffer[3];
 
-                    // Convert from big-endian (network byte order) manually
-                    int length = (lengthBuffer[0] << 24) |
-                                 (lengthBuffer[1] << 16) |
-                                 (lengthBuffer[2] << 8) |
-                                 lengthBuffer[3];
-
-                    Console.WriteLine($"Received message: Status={status}, Length={length}");
 
                     if (length <= 0 || length > 10485760) // 10MB max for sanity check
                     {
@@ -142,27 +121,12 @@ namespace client_gui
 
                     // Read JSON Message
                     byte[] jsonBuffer = ReceiveExact(length);
-                    string encryptedJson = Encoding.UTF8.GetString(jsonBuffer);
+                    string finalJson = Encoding.UTF8.GetString(jsonBuffer);
 
-                    string finalJson = encryptedJson;
 
-                    // Decrypt if we have crypto capabilities and it's not login/signup responses
-                    if (App.Crypto != null && status != MessageCodes.LOGIN_RESPONSE_CODE && status != MessageCodes.SIGNUP_RESPONSE_CODE)
-                    {
-                        try
-                        {
-                            finalJson = App.Crypto.Decrypt(encryptedJson);
-                            Console.WriteLine($"Decrypted JSON: {finalJson}");
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Decryption failed: {ex.Message}. Using raw data.");
-                            finalJson = encryptedJson;
-                        }
-                    }
 
                     // Debug output for JSON content
-                    Console.WriteLine($"Final JSON: {(finalJson.Length > 100 ? finalJson.Substring(0, 100) + "..." : finalJson)}");
+                    Console.WriteLine($"Received JSON: {(finalJson.Length > 100 ? finalJson.Substring(0, 100) + "..." : finalJson)}");
 
                     return (status, finalJson);
                 }

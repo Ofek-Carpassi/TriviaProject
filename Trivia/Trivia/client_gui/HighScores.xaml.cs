@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace client_gui
@@ -12,6 +13,19 @@ namespace client_gui
         {
             InitializeComponent();
             DataContext = new HighScoresViewModel();
+        }
+        
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                NavigationService?.Navigate(new Statistics());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error navigating back to statistics: {ex.Message}");
+                MessageBox.Show("Error returning to statistics.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
@@ -31,23 +45,24 @@ namespace client_gui
 
         public HighScoresViewModel()
         {
-            // Sample data - replace with actual data source
             LoadScores();
         }
 
         private void LoadScores()
         {
-            // This is where you'd typically fetch from a database or server
+            // Sample data - in a real app you'd fetch from server/database
             var scores = new List<ScoreEntry>
             {
                 new ScoreEntry { Username = "Player1", Score = 1000 },
                 new ScoreEntry { Username = "Player2", Score = 800 },
-                new ScoreEntry { Username = "Player3", Score = 600 }
+                new ScoreEntry { Username = "Player3", Score = 600 },
+                new ScoreEntry { Username = "Player4", Score = 500 },
+                new ScoreEntry { Username = "Player5", Score = 400 }
             };
 
-            // Sort and take top 3
+            // Sort by score and assign ranks
             TopScores = scores.OrderByDescending(s => s.Score)
-                            .Take(3)
+                            .Take(10)
                             .Select((s, i) => new ScoreEntry
                             {
                                 Username = s.Username,
@@ -56,9 +71,8 @@ namespace client_gui
                             .ToList();
         }
 
-        // Fix: Add the nullable annotation to match the interface
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

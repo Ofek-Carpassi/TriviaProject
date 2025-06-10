@@ -24,5 +24,18 @@ namespace client_gui
         {
             InitializeComponent();
         }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                NavigationService?.Navigate(new Statistics());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error navigating back to statistics: {ex.Message}");
+                MessageBox.Show("Error returning to statistics.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }

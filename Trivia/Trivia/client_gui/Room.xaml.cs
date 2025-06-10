@@ -109,8 +109,10 @@ namespace client_gui
                             if (roomStateResp.hasGameBegun)
                             {
                                 _isRunning = false;
-                                MessageBox.Show("Game has started! (Game implementation not completed)",
-                                    "Game Started", MessageBoxButton.OK, MessageBoxImage.Information);
+                                Console.WriteLine($"Game has started! Navigating to game for room {_roomId}");
+
+                                // We're already in a Dispatcher context, so just navigate directly
+                                NavigationService?.Navigate(new GameScreen(_roomId));
                             }
                         });
                     }
@@ -149,6 +151,12 @@ namespace client_gui
         {
             _isRunning = false;
             LeaveRoomAndStopThread();  // Make sure to stop the task
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Leave the room and return to join room screen
+            NavigationService?.Navigate(new JoinRoom());
         }
 
         /// <summary>
@@ -229,6 +237,8 @@ namespace client_gui
                 {
                     MessageBox.Show("Game started successfully!", "Game Started",
                         MessageBoxButton.OK, MessageBoxImage.Information);
+                    _isRunning = false;
+                    NavigationService?.Navigate(new GameScreen(_roomId));
                 }
                 else if (resp is ErrorResponse errorResp)
                 {

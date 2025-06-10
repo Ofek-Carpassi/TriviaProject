@@ -14,50 +14,61 @@ GetQuestionResponse GameManager::getQuestion(const std::string& username)
 {
     GetQuestionResponse response;
 
-    // Check if player is in a game
-    if (m_playerGameData.find(username) == m_playerGameData.end())
-    {
-        response.status = 0; // No game found for player
-        return response;
-    }
-
-    PlayerGameData& playerData = m_playerGameData[username];
-
-    // Check if player has finished all questions
-    if (playerData.currentQuestionIndex >= playerData.totalQuestions || playerData.hasFinished)
-    {
-        // Mark player as finished
-        playerData.hasFinished = true;
-
-        // Check if all players in the room are done
-        updateGameFinishedStatus(playerData.roomId);
-
-        response.status = 0; // No more questions
-        return response;
-    }
-
-    // Get the current question
-    response.status = 1; // Success, has question
-    response.question = playerData.currentQuestion.getQuestion();
-
-    // Add all answers to the response
-    const std::vector<std::string>& answers = playerData.currentQuestion.getPossibleAnswers();
-    for (unsigned int i = 0; i < static_cast<unsigned int>(answers.size()); i++)
-    {
-        response.answers[i] = answers[i];
-    }
-
-    playerData.currentQuestionIndex++; // Move to next question for next time
-
-    // If this was the last question, get a new one from the database for next time
-    if (playerData.currentQuestionIndex < playerData.totalQuestions)
-    {
-        // Get next question from database (for next time)
-        std::vector<Question> nextQuestions = m_database->getQuestions(1);
-        if (!nextQuestions.empty())
+    try {
+        // Check if player is in a game
+        if (m_playerGameData.find(username) == m_playerGameData.end())
         {
-            playerData.currentQuestion = nextQuestions[0];
+            response.status = 0;
+            response.message = "User not in game";
+            return response;
         }
+
+        PlayerGameData& playerData = m_playerGameData[username];
+
+        std::cout << "Getting question for player " << username
+            << ", index " << playerData.currentQuestionIndex
+            << " of " << playerData.totalQuestions
+            << " (questions array size: " << playerData.questions.size() << ")" << std::endl;
+
+        // Check if player has finished all questions
+        if (playerData.currentQuestionIndex >= playerData.questions.size() || playerData.hasFinished)
+        {
+            // Mark player as finished
+            playerData.hasFinished = true;
+            updateGameFinishedStatus(playerData.roomId);
+
+            response.status = 0;
+            response.message = "No more questions";
+            return response;
+        }
+
+        // Get the current question (based on currentQuestionIndex)
+        playerData.currentQuestion = playerData.questions[playerData.currentQuestionIndex];
+
+        response.status = 1; // Success
+        response.question = playerData.currentQuestion.getQuestion();
+
+        // Add all answers to the response
+        response.answers = std::map<unsigned int, std::string>();
+
+        const std::vector<std::string>& answers = playerData.currentQuestion.getPossibleAnswers();
+        for (unsigned int i = 0; i < static_cast<unsigned int>(answers.size()); i++)
+        {
+            response.answers[i] = answers[i];
+        }
+
+        // Increment index for next question
+        playerData.currentQuestionIndex++;
+
+        if (playerData.currentQuestionIndex >= playerData.questions.size())
+        {
+            std::cout << "Last question reached for player " << username << std::endl;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cout << "Error in getQuestion: " << e.what() << std::endl;
+        response.status = 0;
+        response.message = e.what();
     }
 
     return response;
@@ -159,23 +170,27 @@ void GameManager::createGame(unsigned int roomId, const std::vector<std::string>
     // Get questions from the database
     std::vector<Question> questions = m_database->getQuestions(questionCount);
 
-    if (questions.empty())
-    {
+    if (questions.empty()) {
         throw std::exception("Failed to get questions from database");
     }
+
+    std::cout << "Retrieved " << questions.size() << " questions for game in room " << roomId << std::endl;
 
     // Store players in the room
     m_roomPlayers[roomId] = players;
     m_gameFinished[roomId] = false;
 
     // Initialize game data for each player
-    for (const std::string& username : players)
-    {
+    for (const std::string& username : players) {
         PlayerGameData playerData;
         playerData.roomId = roomId;
         playerData.currentQuestionIndex = 0;
-        playerData.totalQuestions = questionCount;
+        playerData.totalQuestions = questions.size();
         playerData.currentQuestion = questions[0]; // Start with first question
+
+        // Store all questions for future use
+        playerData.questions = questions;
+
         playerData.correctAnswerCount = 0;
         playerData.wrongAnswerCount = 0;
         playerData.totalAnswerTime = 0;
@@ -183,6 +198,8 @@ void GameManager::createGame(unsigned int roomId, const std::vector<std::string>
         playerData.hasFinished = false;
 
         m_playerGameData[username] = playerData;
+
+        std::cout << "Initialized game data for player: " << username << std::endl;
     }
 }
 

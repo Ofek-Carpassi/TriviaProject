@@ -29,6 +29,10 @@ private:
     RequestResult startGame(const RequestInfo& request);
     RequestResult getRoomState(const RequestInfo& request);
     RequestResult leaveRoom(const RequestInfo& request);
+    RequestResult addQuestion(const RequestInfo& request);
+    RequestResult joinHeadToHead(const RequestInfo& request);
+    RequestResult checkHeadToHeadStatus(const RequestInfo& request);
+    RequestResult leaveHeadToHead(const RequestInfo& request);
 
     std::string m_username;
     RequestHandlerFactory& m_handlerFactory;

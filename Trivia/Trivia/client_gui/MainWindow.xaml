@@ -5,8 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:client_gui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Trivia Game" 
+        Height="800" 
+        Width="1200"
+        MinHeight="600"
+        MinWidth="800"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Background="{StaticResource BackgroundBrush}">
     <Grid>
-        <Frame x:Name="frame1"></Frame>
+        <Frame x:Name="frame1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

@@ -28,10 +28,10 @@ namespace client_gui
 
                 var roomData = new
                 {
-                    name = RoomNameTextBox.Text, 
-                    maxPlayers = maxPlayers,              
-                    questionCount = questionCount,  
-                    timePerQuestion = timePerQuestion     
+                    name = RoomNameTextBox.Text,
+                    maxPlayers = maxPlayers,
+                    questionCount = questionCount,
+                    timePerQuestion = timePerQuestion
                 };
 
                 string jsonString = JsonConvert.SerializeObject(roomData);
@@ -43,15 +43,12 @@ namespace client_gui
                 {
                     // Use mutex to prevent concurrent access to the socket
                     App.CommunicatorMutex.WaitOne();
-                    Console.WriteLine("Sending create room request...");
                     Communicator.Send(msg);
                     var responseData = Communicator.Receive();
-                    Console.WriteLine($"Received response with code {responseData.status}");
                     resp = Deserializer.DeserializeResponse(responseData);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error in create room communication: {ex.Message}");
                     MessageBox.Show($"Connection error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -63,21 +60,23 @@ namespace client_gui
 
                 if (resp.Status == MessageCodes.CREATE_ROOM_RESPONSE_CODE)
                 {
-                    Console.WriteLine($"Room created successfully with ID: {resp.message}");
                     NavigationService?.Navigate(new Room(Convert.ToInt32(resp.message), true));
                 }
                 else
                 {
                     string error = resp is ErrorResponse errorResp ? errorResp.message : "Room creation failed.";
-                    Console.WriteLine($"Room creation failed: {error}");
                     MessageBox.Show(error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected error in CreateRoom_Click: {ex.Message}");
                 MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new Menu());
         }
     }
 }

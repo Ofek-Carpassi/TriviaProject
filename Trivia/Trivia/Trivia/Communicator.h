@@ -30,7 +30,7 @@ private:
     // binary protocol
     Buffer getMessageFromClient(SOCKET clientSocket);
     void sendMessageToClient(SOCKET clientSocket, const Buffer& buffer);
-    RequestInfo buildRequestInfo(const Buffer& buffer);
+    RequestInfo buildRequestInfo(Buffer& buffer);
 
     std::map<SOCKET, IRequestHandler*> m_clients;
     RequestHandlerFactory& m_handlerFactory;

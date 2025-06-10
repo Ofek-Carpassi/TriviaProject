@@ -6,7 +6,8 @@ RequestHandlerFactory::RequestHandlerFactory(IDatabase* database) :
     m_database(database),
     m_loginManager(database),
     m_statisticsManager(database),
-    m_gameManager(database)
+    m_gameManager(database),
+    m_headToHeadManager(&m_gameManager, &m_roomManager)
 {
 }
 
@@ -62,4 +63,9 @@ GameRequestHandler* RequestHandlerFactory::createGameRequestHandler(const std::s
 GameManager& RequestHandlerFactory::getGameManager()
 {
     return m_gameManager;
+}
+
+HeadToHeadManager& RequestHandlerFactory::getHeadToHeadManager()
+{
+    return m_headToHeadManager;
 }

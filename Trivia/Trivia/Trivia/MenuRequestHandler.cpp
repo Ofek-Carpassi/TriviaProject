@@ -3,6 +3,11 @@
 #include "JsonResponsePacketSerializer.h"
 #include "messageCodes.h"
 #include <iostream>
+#include "json.hpp"
+#include "BinaryUtils.h"
+
+using json = nlohmann::json;
+
 MenuRequestHandler::MenuRequestHandler(const std::string& username, RequestHandlerFactory& handlerFactory)
     : m_username(username), m_handlerFactory(handlerFactory)
 {
@@ -54,6 +59,14 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& request)
         return getRoomState(request);
     case LEAVE_ROOM_CODE:
         return leaveRoom(request);
+	case ADD_QUESTION_CODE:
+		return addQuestion(request);
+    case JOIN_HEAD_TO_HEAD_CODE:
+        return joinHeadToHead(request);
+    case CHECK_HEAD_TO_HEAD_STATUS_CODE:
+        return checkHeadToHeadStatus(request);
+    case LEAVE_HEAD_TO_HEAD_CODE:
+        return leaveHeadToHead(request);
     default:
         // Should not reach here due to isRequestRelevant check
         Response response;
@@ -534,6 +547,228 @@ RequestResult MenuRequestHandler::leaveRoom(const RequestInfo& request)
 
         RequestResult result;
         result.response = JsonResponsePacketSerializer::serializeErrorResponse(response);
+        result.newHandler = this;
+        return result;
+    }
+}
+
+RequestResult MenuRequestHandler::addQuestion(const RequestInfo& request)
+{
+    try
+    {
+        // Parse the JSON
+        std::string jsonString(request.buffer.begin(), request.buffer.end());
+        std::cout << "Received add question request: " << jsonString << std::endl;
+
+        // Parse JSON using the json library
+        json j = json::parse(jsonString);
+
+        // Extract question data
+        std::string question = j["question"].get<std::string>();
+        std::string correct_answer = j["correct_answer"].get<std::string>();
+
+        // Extract wrong answers
+        std::vector<std::string> wrong_answers;
+        for (const auto& answer : j["wrong_answers"])
+        {
+            wrong_answers.push_back(answer.get<std::string>());
+        }
+
+        // Add to database (create this method in SqliteDatabase)
+        bool success = m_handlerFactory.getDatabase()->addQuestion(question, correct_answer, wrong_answers);
+
+        // Prepare response
+        Response response;
+        response.status = success ? 1 : 0;
+        response.message = success ? "Question added successfully" : "Failed to add question";
+
+        // Serialize and return response
+        RequestResult result;
+        result.response = JsonResponsePacketSerializer::serializeResponse(response, ADD_QUESTION_RESPONSE_CODE);
+        result.newHandler = this;
+        return result;
+    }
+    catch (const std::exception& e)
+    {
+        Response response;
+        response.status = 0;
+        response.message = "Failed to add question: " + std::string(e.what());
+
+        RequestResult result;
+        result.response = JsonResponsePacketSerializer::serializeErrorResponse(response);
+        result.newHandler = this;
+        return result;
+    }
+}
+
+RequestResult MenuRequestHandler::joinHeadToHead(const RequestInfo& request)
+{
+    try
+    {
+        // Parse JSON
+        std::string jsonStr = std::string(request.buffer.begin(), request.buffer.end());
+        json j = json::parse(jsonStr);
+        std::string username = j["username"].get<std::string>();
+
+        std::string opponent;
+        unsigned int roomId = 0;
+        bool hasMatch = m_handlerFactory.getHeadToHeadManager().joinQueue(username, opponent, roomId);
+
+        // Create response JSON
+        json responseJson;
+        responseJson["status"] = 1;
+        responseJson["queueSize"] = m_handlerFactory.getHeadToHeadManager().getQueueSize();
+        responseJson["hasMatch"] = hasMatch;
+
+        if (hasMatch)
+        {
+            responseJson["roomId"] = roomId;
+            responseJson["opponent"] = opponent;
+        }
+
+        // Convert to string
+        std::string jsonResponse = responseJson.dump();
+
+        // Create binary response
+        Buffer response;
+        response.push_back(JOIN_HEAD_TO_HEAD_RESPONSE_CODE);
+
+        Buffer sizeBuffer = ConvertToBinaryFourBytes(jsonResponse.size());
+        response.insert(response.end(), sizeBuffer.begin(), sizeBuffer.end());
+        response.insert(response.end(), jsonResponse.begin(), jsonResponse.end());
+
+        // Return the result with the same handler
+        RequestResult result;
+        result.response = response;
+        result.newHandler = this;
+
+        if (hasMatch)
+        {
+            // If matched, switch to game request handler
+            result.newHandler = m_handlerFactory.createGameRequestHandler(username, roomId);
+        }
+
+        return result;
+    }
+    catch (std::exception& e)
+    {
+        // Return error
+        Response errorResponse;
+        errorResponse.status = 0;
+        errorResponse.message = e.what();
+
+        RequestResult result;
+        result.response = JsonResponsePacketSerializer::serializeErrorResponse(errorResponse);
+        result.newHandler = this;
+        return result;
+    }
+}
+
+RequestResult MenuRequestHandler::checkHeadToHeadStatus(const RequestInfo& request)
+{
+    try
+    {
+        // Parse JSON
+        std::string jsonStr = std::string(request.buffer.begin(), request.buffer.end());
+        json j = json::parse(jsonStr);
+        std::string username = j["username"].get<std::string>();
+
+        std::string opponent;
+        unsigned int roomId = 0;
+        bool hasMatch = m_handlerFactory.getHeadToHeadManager().checkMatch(username, opponent, roomId);
+
+        // Create response JSON
+        json responseJson;
+        responseJson["status"] = 1;
+        responseJson["queueSize"] = m_handlerFactory.getHeadToHeadManager().getQueueSize();
+        responseJson["hasMatch"] = hasMatch;
+
+        if (hasMatch)
+        {
+            responseJson["roomId"] = roomId;
+            responseJson["opponent"] = opponent;
+        }
+
+        // Convert to string
+        std::string jsonResponse = responseJson.dump();
+
+        // Create binary response
+        Buffer response;
+        response.push_back(CHECK_HEAD_TO_HEAD_STATUS_RESPONSE_CODE);
+
+        Buffer sizeBuffer = ConvertToBinaryFourBytes(jsonResponse.size());
+        response.insert(response.end(), sizeBuffer.begin(), sizeBuffer.end());
+        response.insert(response.end(), jsonResponse.begin(), jsonResponse.end());
+
+        // Return the result with the same handler
+        RequestResult result;
+        result.response = response;
+        result.newHandler = this;
+
+        if (hasMatch)
+        {
+            // If matched, switch to game request handler
+            result.newHandler = m_handlerFactory.createGameRequestHandler(username, roomId);
+        }
+
+        return result;
+    }
+    catch (std::exception& e)
+    {
+        // Return error
+        Response errorResponse;
+        errorResponse.status = 0;
+        errorResponse.message = e.what();
+
+        RequestResult result;
+        result.response = JsonResponsePacketSerializer::serializeErrorResponse(errorResponse);
+        result.newHandler = this;
+        return result;
+    }
+}
+
+RequestResult MenuRequestHandler::leaveHeadToHead(const RequestInfo& request)
+{
+    try
+    {
+        // Parse JSON
+        std::string jsonStr = std::string(request.buffer.begin(), request.buffer.end());
+        json j = json::parse(jsonStr);
+        std::string username = j["username"].get<std::string>();
+
+        // Remove from queue
+        m_handlerFactory.getHeadToHeadManager().leaveQueue(username);
+
+        // Create response JSON
+        json responseJson;
+        responseJson["status"] = 1;
+
+        // Convert to string
+        std::string jsonResponse = responseJson.dump();
+
+        // Create binary response
+        Buffer response;
+        response.push_back(LEAVE_HEAD_TO_HEAD_RESPONSE_CODE);
+
+        Buffer sizeBuffer = ConvertToBinaryFourBytes(jsonResponse.size());
+        response.insert(response.end(), sizeBuffer.begin(), sizeBuffer.end());
+        response.insert(response.end(), jsonResponse.begin(), jsonResponse.end());
+
+        // Return the result
+        RequestResult result;
+        result.response = response;
+        result.newHandler = this;
+        return result;
+    }
+    catch (std::exception& e)
+    {
+        // Return error
+        Response errorResponse;
+        errorResponse.status = 0;
+        errorResponse.message = e.what();
+
+        RequestResult result;
+        result.response = JsonResponsePacketSerializer::serializeErrorResponse(errorResponse);
         result.newHandler = this;
         return result;
     }

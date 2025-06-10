@@ -9,11 +9,9 @@ namespace client_gui
         {
             try
             {
-                Console.WriteLine($"Deserializing response: Status={data.status}, JSON={data.json}");
 
                 if (string.IsNullOrEmpty(data.json))
                 {
-                    Console.WriteLine("Warning: Empty JSON in response");
                     return new ErrorResponse
                     {
                         Status = data.status,
@@ -43,7 +41,6 @@ namespace client_gui
                 // Set the status if deserialization returns null
                 if (response == null)
                 {
-                    Console.WriteLine($"Warning: Deserialization returned null for code {data.status}");
                     return new ErrorResponse
                     {
                         Status = data.status,
@@ -61,7 +58,6 @@ namespace client_gui
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"JSON deserialization error: {ex.Message}");
                 return new ErrorResponse
                 {
                     Status = MessageCodes.ERROR_RESPONSE_CODE,
@@ -70,7 +66,6 @@ namespace client_gui
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected deserialization error: {ex.Message}");
                 return new ErrorResponse
                 {
                     Status = MessageCodes.ERROR_RESPONSE_CODE,

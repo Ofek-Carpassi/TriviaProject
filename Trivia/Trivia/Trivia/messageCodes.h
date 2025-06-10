@@ -17,6 +17,10 @@ constexpr unsigned char LEAVE_GAME_CODE = 212;
 constexpr unsigned char GET_QUESTION_CODE = 213;
 constexpr unsigned char SUBMIT_ANSWER_CODE = 214;
 constexpr unsigned char GET_GAME_RESULTS_CODE = 215;
+constexpr unsigned char ADD_QUESTION_CODE = 220;
+constexpr unsigned char JOIN_HEAD_TO_HEAD_CODE = 230;
+constexpr unsigned char CHECK_HEAD_TO_HEAD_STATUS_CODE = 231;
+constexpr unsigned char LEAVE_HEAD_TO_HEAD_CODE = 232;
 
 // Response codes (server -> client)
 constexpr unsigned char LOGIN_RESPONSE_CODE = 100;
@@ -36,3 +40,7 @@ constexpr unsigned char GET_QUESTION_RESPONSE_CODE = 113;
 constexpr unsigned char SUBMIT_ANSWER_RESPONSE_CODE = 114;
 constexpr unsigned char GET_GAME_RESULTS_RESPONSE_CODE = 115;
 constexpr unsigned char LEAVE_GAME_RESPONSE_CODE = 116;
+constexpr unsigned char ADD_QUESTION_RESPONSE_CODE = 120;
+constexpr unsigned char JOIN_HEAD_TO_HEAD_RESPONSE_CODE = 130;
+constexpr unsigned char CHECK_HEAD_TO_HEAD_STATUS_RESPONSE_CODE = 131;
+constexpr unsigned char LEAVE_HEAD_TO_HEAD_RESPONSE_CODE = 132;

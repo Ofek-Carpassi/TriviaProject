@@ -5,53 +5,144 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="HighScores">
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="High Scores">
 
-    <Grid Background="#F0F0F0">
+    <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        <!-- Title -->
-        <TextBlock Grid.Row="0" 
-                   Text="High Scores" 
-                   FontSize="36" 
-                   FontWeight="Bold" 
-                   HorizontalAlignment="Center" 
-                   Margin="0,20,0,20"/>
-
-        <!-- Scores List -->
-        <ListView Grid.Row="1" 
-                  ItemsSource="{Binding TopScores}"
-                  Margin="20"
-                  BorderThickness="0"
-                  Background="Transparent">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" 
-                                  Text="{Binding Rank}"
-                                  FontSize="20" 
-                                  Margin="0,0,20,0"/>
-
-                        <TextBlock Grid.Column="1" 
-                                  Text="{Binding PlayerName}" 
-                                  FontSize="20"/>
-
-                        <TextBlock Grid.Column="2" 
-                                  Text="{Binding Score}" 
-                                  FontSize="20"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <!-- Back Button -->
+                <Button Content="← Back" 
+                       HorizontalAlignment="Left"
+                       Style="{StaticResource ModernButtonStyle}"
+                       Padding="15,8"
+                       FontSize="14"
+                       Click="BackButton_Click"/>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="🏆" FontSize="28" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                    <TextBlock Text="Leaderboard" 
+                              FontSize="28" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- High Scores Content -->
+        <ScrollViewer Grid.Row="1" 
+                     VerticalScrollBarVisibility="Auto"
+                     Padding="40,30">
+            <Border Background="{StaticResource SurfaceBrush}" 
+                    CornerRadius="16" 
+                    Padding="30"
+                    MinHeight="400">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="315" 
+                                    ShadowDepth="3" 
+                                    BlurRadius="10" 
+                                    Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <TextBlock Text="🌟 Top Players" 
+                              FontSize="24" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              HorizontalAlignment="Center" 
+                              Margin="0,0,0,30"/>
+                    
+                    <ItemsControl ItemsSource="{Binding TopScores}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource BackgroundBrush}"
+                                       CornerRadius="8"
+                                       Padding="20,15"
+                                       Margin="0,0,0,10"
+                                       BorderBrush="{StaticResource BorderBrush}"
+                                       BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!-- Rank - calculated based on position -->
+                                        <TextBlock Grid.Column="0" 
+                                                  FontSize="20"
+                                                  FontWeight="Bold"
+                                                  Foreground="{StaticResource PrimaryBrush}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,20,0">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="#{0}">
+                                                    <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" 
+                                                           Path="ItemsSource" 
+                                                           Converter="{StaticResource IndexConverter}" 
+                                                           ConverterParameter="{Binding}"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        
+                                        <TextBlock Grid.Column="1" 
+                                                  Text="{Binding Username}" 
+                                                  FontSize="18"
+                                                  FontWeight="Medium"
+                                                  Foreground="{StaticResource TextPrimaryBrush}"
+                                                  VerticalAlignment="Center"/>
+                                        
+                                        <TextBlock Grid.Column="2" 
+                                                  Text="{Binding Score}" 
+                                                  FontSize="20"
+                                                  FontWeight="Bold"
+                                                  Foreground="{StaticResource SecondaryBrush}"
+                                                  VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    
+                    <!-- Message when no scores available -->
+                    <Border x:Name="NoScoresMessage" 
+                           Visibility="Collapsed"
+                           Background="{StaticResource BackgroundBrush}"
+                           CornerRadius="8"
+                           Padding="30,20"
+                           Margin="0,20,0,0">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="📊" 
+                                      FontSize="48" 
+                                      HorizontalAlignment="Center" 
+                                      Margin="0,0,0,15"/>
+                            <TextBlock Text="No scores yet" 
+                                      FontSize="20" 
+                                      FontWeight="Bold"
+                                      Foreground="{StaticResource TextPrimaryBrush}"
+                                      HorizontalAlignment="Center" 
+                                      Margin="0,0,0,10"/>
+                            <TextBlock Text="Play some games to see your stats here!" 
+                                      FontSize="14" 
+                                      Foreground="{StaticResource TextSecondaryBrush}"
+                                      HorizontalAlignment="Center"
+                                      TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </Page>

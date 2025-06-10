@@ -26,4 +26,5 @@ public:
     static Buffer serializeSubmitAnswerResponse(SubmitAnswerResponse msg);
     static Buffer serializeGetQuestionResponse(GetQuestionResponse msg);
     static Buffer serializeLeaveGameResponse(LeaveGameResponse msg);
+    static Buffer serializeResponse(const Response& response, unsigned char messageCode);
 };

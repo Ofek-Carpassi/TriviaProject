@@ -24,16 +24,46 @@ namespace client_gui
         {
             InitializeComponent();
         }
+        
         private void PersonalStats_Click(object sender, RoutedEventArgs e)
         {
-            
+            try
+            {
+                // Navigate to Personal Statistics page
+                NavigationService?.Navigate(new PersonalStatics());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error navigating to personal statistics: {ex.Message}");
+                MessageBox.Show("Error opening personal statistics.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Leaderboard_Click(object sender, RoutedEventArgs e)
         {
-
+            try
+            {
+                // Navigate to High Scores page
+                NavigationService?.Navigate(new HighScores());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error navigating to leaderboard: {ex.Message}");
+                MessageBox.Show("Error opening leaderboard.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                NavigationService?.Navigate(new Menu());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error navigating back to menu: {ex.Message}");
+                MessageBox.Show("Error returning to menu.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
-
 }

@@ -68,6 +68,7 @@ typedef struct GetQuestionResponse
 {
     unsigned int status = 0;
     std::string question;
+    std::string message;
     std::map<unsigned int, std::string> answers;
 } GetQuestionResponse;
 

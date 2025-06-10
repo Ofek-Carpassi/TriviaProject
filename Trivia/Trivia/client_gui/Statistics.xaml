@@ -5,13 +5,107 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="800" d:DesignWidth="1200"
       Title="Statistics">
 
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Content="Personal Statistics" Width="200" Height="50" Click="PersonalStats_Click"/>
-            <Button Content="High scores" Width="200" Height="50" Click="Leaderboard_Click"/>
-        </StackPanel>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <!-- Back Button -->
+                <Button Content="← Back" 
+                       HorizontalAlignment="Left"
+                       Style="{StaticResource ModernButtonStyle}"
+                       Padding="15,8"
+                       FontSize="14"
+                       Click="BackButton_Click"/>
+                
+                <TextBlock Text="Statistics" 
+                          FontSize="28" 
+                          FontWeight="Bold" 
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          HorizontalAlignment="Center"/>
+            </Grid>
+        </Border>
+        
+        <!-- Statistics Content -->
+        <Grid Grid.Row="1" Margin="40,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Personal Statistics -->
+            <Border Grid.Column="0" 
+                    Background="{StaticResource SurfaceBrush}" 
+                    CornerRadius="16" 
+                    Padding="30"
+                    Cursor="Hand">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="315" 
+                                    ShadowDepth="3" 
+                                    BlurRadius="10" 
+                                    Opacity="0.1"/>
+                </Border.Effect>
+                
+                <Button Background="Transparent"
+                       BorderThickness="0"
+                       Padding="20"
+                       Click="PersonalStats_Click">
+                    <StackPanel>
+                        <TextBlock Text="👤" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                        <TextBlock Text="Personal Statistics" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="View your game history, win rate, and personal achievements" 
+                                  FontSize="16" 
+                                  Foreground="{StaticResource TextSecondaryBrush}" 
+                                  HorizontalAlignment="Center" 
+                                  TextAlignment="Center"
+                                  TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+            
+            <!-- High Scores/Leaderboard -->
+            <Border Grid.Column="2" 
+                    Background="{StaticResource SurfaceBrush}" 
+                    CornerRadius="16" 
+                    Padding="30"
+                    Cursor="Hand">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="315" 
+                                    ShadowDepth="3" 
+                                    BlurRadius="10" 
+                                    Opacity="0.1"/>
+                </Border.Effect>
+                
+                <Button Background="Transparent"
+                       BorderThickness="0"
+                       Padding="20"
+                       Click="Leaderboard_Click">
+                    <StackPanel>
+                        <TextBlock Text="🏆" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                        <TextBlock Text="Leaderboard" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="See the top players and compare your ranking with others" 
+                                  FontSize="16" 
+                                  Foreground="{StaticResource TextSecondaryBrush}" 
+                                  HorizontalAlignment="Center" 
+                                  TextAlignment="Center"
+                                  TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

@@ -11,6 +11,7 @@
 #include "StatisticsManager.h"
 #include "GameManager.h"
 #include <string>
+#include "HeadToHeadManager.h"
 
 class LoginRequestHandler;
 class MenuRequestHandler;
@@ -34,6 +35,7 @@ public:
     RoomManager& getRoomManager();
     StatisticsManager& getStatisticsManager();
     GameManager& getGameManager();
+    HeadToHeadManager& getHeadToHeadManager();
 
     IDatabase* getDatabase() const;
 
@@ -43,4 +45,5 @@ private:
     RoomManager m_roomManager;
     StatisticsManager m_statisticsManager;
     GameManager m_gameManager;
+    HeadToHeadManager m_headToHeadManager;
 };

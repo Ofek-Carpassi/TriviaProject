@@ -116,7 +116,7 @@ void Communicator::sendMessageToClient(SOCKET clientSocket, const Buffer& buffer
         throw std::exception("Error sending message to client");
 }
 
-RequestInfo Communicator::buildRequestInfo(const Buffer& buffer)
+RequestInfo Communicator::buildRequestInfo(Buffer& buffer)
 {
     RequestInfo info;
 

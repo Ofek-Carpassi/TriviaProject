@@ -5,22 +5,196 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Room">
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="Room Lobby">
 
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
-            <TextBlock Text="Room Lobby" FontSize="28" FontWeight="Bold" TextAlignment="Center" Margin="0 0 0 20"/>
-
-            <TextBlock x:Name="RoomNameText" Text="Room: TriviaMaster" FontSize="18" TextAlignment="Center" Margin="0 0 0 10"/>
-
-            <TextBlock Text="Admin:" FontWeight="Bold" Margin="0 10 0 0"/>
-            <TextBlock x:Name="AdminNameTextBlock" FontSize="16" Foreground="DarkBlue" Margin="0 0 0 10"/>
-
-            <TextBlock Text="Players:" FontWeight="Bold" Margin="0 5 0 5"/>
-            <ListBox x:Name="PlayersListBox" Height="200" Margin="0 0 0 20"/>
-
-                <Button Content="Start Game" x:Name="StartGameButton" Width="120" Height="35" Margin="10 0" Click="StartGameButton_Click"/>
-            </StackPanel>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <!-- Back Button -->
+                <Button Content="← Back" 
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource ModernButtonStyle}"
+                    Padding="15,8"
+                    FontSize="14"
+                    Click="BackButton_Click"/>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="🏠" FontSize="28" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                    <TextBlock x:Name="RoomNameText" 
+                            Text="Room Lobby" 
+                            FontSize="28" 
+                            FontWeight="Bold" 
+                            Foreground="{StaticResource TextPrimaryBrush}"
+                            VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <Button x:Name="StartGameButton" 
+                    Content="🚀 Start Game" 
+                    HorizontalAlignment="Right"
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    Padding="25,12"
+                    FontSize="16"
+                    Visibility="Collapsed"
+                    Click="StartGameButton_Click"/>
+            </Grid>
+        </Border>
+        
+        <!-- Room Content -->
+        <Grid Grid.Row="1" Margin="40,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Room Info Panel -->
+            <Border Grid.Column="0" 
+                    Background="{StaticResource SurfaceBrush}" 
+                    CornerRadius="16" 
+                    Padding="30">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="315" 
+                                    ShadowDepth="3" 
+                                    BlurRadius="10" 
+                                    Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <TextBlock Text="ℹ️ Room Information" 
+                              FontSize="22" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,25"/>
+                    
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" 
+                                  Text="👑 Room Admin:" 
+                                  FontSize="16" 
+                                  FontWeight="Medium"
+                                  Foreground="{StaticResource TextSecondaryBrush}"
+                                  Margin="0,0,15,0"/>
+                        <TextBlock Grid.Column="1" 
+                                  x:Name="AdminNameTextBlock" 
+                                  Text="Loading..." 
+                                  FontSize="16" 
+                                  FontWeight="Bold"
+                                  Foreground="{StaticResource PrimaryBrush}"/>
+                    </Grid>
+                    
+                    <Separator Background="{StaticResource BorderBrush}" 
+                             Height="1" 
+                             Margin="0,10,0,20"/>
+                    
+                    <TextBlock Text="⏱️ Game Settings" 
+                              FontSize="18" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,15"/>
+                    
+                    <StackPanel>
+                        <TextBlock Text="• Time per Question: 30 seconds" 
+                                  FontSize="14" 
+                                  Foreground="{StaticResource TextSecondaryBrush}"
+                                  Margin="0,0,0,8"/>
+                        <TextBlock Text="• Total Questions: 10" 
+                                  FontSize="14" 
+                                  Foreground="{StaticResource TextSecondaryBrush}"
+                                  Margin="0,0,0,8"/>
+                        <TextBlock Text="• Maximum Players: 6" 
+                                  FontSize="14" 
+                                  Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            
+            <!-- Players Panel -->
+            <Border Grid.Column="2" 
+                    Background="{StaticResource SurfaceBrush}" 
+                    CornerRadius="16" 
+                    Padding="30">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="315" 
+                                    ShadowDepth="3" 
+                                    BlurRadius="10" 
+                                    Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <TextBlock Text="👥 Players in Room" 
+                              FontSize="22" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,25"/>
+                    
+                    <ListBox x:Name="PlayersListBox" 
+                            BorderThickness="0"
+                            Background="Transparent"
+                            MaxHeight="400">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Margin" Value="0,0,0,10"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="{StaticResource BackgroundBrush}"
+                                                   CornerRadius="8"
+                                                   Padding="15,12"
+                                                   BorderBrush="{StaticResource BorderBrush}"
+                                                   BorderThickness="1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    
+                                                    <TextBlock Grid.Column="0" 
+                                                              Text="👤" 
+                                                              FontSize="16" 
+                                                              VerticalAlignment="Center"
+                                                              Margin="0,0,10,0"/>
+                                                    <ContentPresenter Grid.Column="1" 
+                                                                     VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2" 
+                                                              Text="🟢" 
+                                                              FontSize="12" 
+                                                              VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    
+                    <TextBlock Text="Waiting for more players to join..." 
+                              FontSize="14" 
+                              FontStyle="Italic"
+                              Foreground="{StaticResource TextSecondaryBrush}"
+                              HorizontalAlignment="Center"
+                              Margin="0,20,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

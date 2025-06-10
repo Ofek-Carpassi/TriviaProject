@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Newtonsoft.Json;
+using System.Windows.Input;
 
 namespace client_gui
 {
@@ -36,7 +38,7 @@ namespace client_gui
         }
 
         private void GetNextQuestion()
-        {
+        {   
             try
             {
                 App.CommunicatorMutex.WaitOne();
@@ -55,10 +57,20 @@ namespace client_gui
 
                     if (questionResponse.status == 1) // Valid question
                     {
-                        DisplayQuestion(questionResponse);
-                        _currentQuestionIndex++;
-                        QuestionNumberText.Text = $"Question {_currentQuestionIndex}/{_totalQuestions}";
-                        StartTimer();
+                        // Before displaying, make sure answers dictionary is not null
+                        if (questionResponse.answers != null)
+                        {
+                            DisplayQuestion(questionResponse);
+                            _currentQuestionIndex++;
+                            QuestionNumberText.Text = $"Question {_currentQuestionIndex}/{_totalQuestions}";
+                            StartTimer();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error: Question received with no answers", 
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            ShowGameResults();
+                        }
                     }
                     else
                     {
@@ -70,6 +82,7 @@ namespace client_gui
                 {
                     MessageBox.Show($"Error getting question: {response.json}",
                         "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ShowGameResults();
                 }
             }
             catch (Exception ex)
@@ -77,6 +90,7 @@ namespace client_gui
                 MessageBox.Show($"Error getting question: {ex.Message}",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Console.WriteLine($"Error in GetNextQuestion: {ex}");
+                ShowGameResults();
             }
             finally
             {
@@ -100,17 +114,79 @@ namespace client_gui
                 Button answerButton = new Button
                 {
                     Content = answer.Value,
-                    Margin = new Thickness(0, 0, 0, 10),
-                    Padding = new Thickness(10),
+                    Margin = new Thickness(0, 0, 0, 15), // left, top, right, bottom
+                    Padding = new Thickness(20, 15, 20, 15),
                     FontSize = 16,
                     Height = 60,
-                    HorizontalContentAlignment = HorizontalAlignment.Left
+                    HorizontalContentAlignment = HorizontalAlignment.Left,
+                    Background = new SolidColorBrush(Color.FromRgb(255, 255, 255)),
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(224, 230, 237)),
+                    BorderThickness = new Thickness(2, 2, 2, 2), 
+                    Foreground = new SolidColorBrush(Color.FromRgb(44, 62, 80)),
+                    Cursor = System.Windows.Input.Cursors.Hand 
                 };
+
+                // Add rounded corners with modern style
+                answerButton.Style = CreateModernAnswerButtonStyle();
 
                 answerButton.Click += AnswerButton_Click;
                 _answerButtons[answerButton] = answer.Key;
                 AnswersPanel.Children.Add(answerButton);
             }
+        }
+        
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Show confirmation dialog before leaving game
+            var result = MessageBox.Show("Are you sure you want to leave the game?", 
+                                        "Leave Game", 
+                                        MessageBoxButton.YesNo, 
+                                        MessageBoxImage.Question);
+            
+            if (result == MessageBoxResult.Yes)
+            {
+                NavigationService?.Navigate(new Menu());
+            }
+        }
+
+        private Style CreateModernAnswerButtonStyle()
+        {
+            Style buttonStyle = new Style(typeof(Button));
+
+            // Set default appearance
+            buttonStyle.Setters.Add(new Setter(Button.BackgroundProperty, new SolidColorBrush(Color.FromRgb(255, 255, 255))));
+            buttonStyle.Setters.Add(new Setter(Button.BorderBrushProperty, new SolidColorBrush(Color.FromRgb(224, 230, 237))));
+            buttonStyle.Setters.Add(new Setter(Button.BorderThicknessProperty, new Thickness(2)));
+            buttonStyle.Setters.Add(new Setter(Button.ForegroundProperty, new SolidColorBrush(Color.FromRgb(44, 62, 80))));
+
+            // Create control template for rounded corners
+            ControlTemplate template = new ControlTemplate(typeof(Button));
+
+            var border = new FrameworkElementFactory(typeof(Border));
+            border.SetValue(Border.BackgroundProperty, new TemplateBindingExtension(Button.BackgroundProperty));
+            border.SetValue(Border.BorderBrushProperty, new TemplateBindingExtension(Button.BorderBrushProperty));
+            border.SetValue(Border.BorderThicknessProperty, new TemplateBindingExtension(Button.BorderThicknessProperty));
+            border.SetValue(Border.CornerRadiusProperty, new CornerRadius(8));
+            border.SetValue(Border.PaddingProperty, new TemplateBindingExtension(Button.PaddingProperty));
+
+            var contentPresenter = new FrameworkElementFactory(typeof(ContentPresenter));
+            contentPresenter.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            contentPresenter.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+
+            border.AppendChild(contentPresenter);
+            template.VisualTree = border;
+
+            // Add hover effects
+            var hoverTrigger = new Trigger();
+            hoverTrigger.Property = Button.IsMouseOverProperty;
+            hoverTrigger.Value = true;
+            hoverTrigger.Setters.Add(new Setter(Button.BackgroundProperty, new SolidColorBrush(Color.FromRgb(52, 152, 219))));
+            hoverTrigger.Setters.Add(new Setter(Button.ForegroundProperty, new SolidColorBrush(Colors.White)));
+
+            template.Triggers.Add(hoverTrigger);
+            buttonStyle.Setters.Add(new Setter(Button.TemplateProperty, template));
+
+            return buttonStyle;
         }
 
         private void StartTimer()

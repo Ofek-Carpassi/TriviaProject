@@ -112,18 +112,30 @@ RequestResult RoomMemberRequestHandler::getRoomState(const RequestInfo& request)
         response.status = GET_ROOM_STATE_RESPONSE_CODE;
         response.hasGameBegun = room->isActive();
         response.players = users;
-        response.answerCount = 0; // This would be filled from game state in a real implementation
+        response.answerCount = 0;
         response.answerTimeout = room->getRoomData().timePerQuestion;
 
-        // Serialize and return response
+        // Serialize response
         RequestResult result;
         result.response = JsonResponsePacketSerializer::serializeGetRoomStateResponse(response);
-        result.newHandler = this;
+
+        // IMPORTANT FIX: If game has begun, switch to GameRequestHandler
+        if (room->isActive())
+        {
+            std::cout << m_username << " transitioning to game handler via room state" << std::endl;
+            result.newHandler = m_handlerFactory.createGameRequestHandler(m_username, m_roomId);
+        }
+        else
+        {
+            result.newHandler = this;
+        }
+
         std::cout << m_username << " Got room state" << std::endl;
         return result;
     }
     catch (const std::exception& e)
     {
+        // Error handling (unchanged)
         Response response;
         response.status = 0;
         response.message = "Failed to get room state: " + std::string(e.what());

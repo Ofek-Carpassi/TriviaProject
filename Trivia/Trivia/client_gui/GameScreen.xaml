@@ -5,10 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="800"
+      d:DesignHeight="700" d:DesignWidth="1000"
       Title="Game">
 
-    <Grid Background="#F0F0F7">
+    <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -16,71 +16,110 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,20,0,10">
-            <TextBlock Text="Trivia Game" 
-                       FontSize="32" 
-                       FontWeight="Bold" 
-                       HorizontalAlignment="Center"/>
-            <TextBlock x:Name="QuestionNumberText" 
-                      Text="Question 1/10" 
-                      FontSize="18"
-                      Margin="0,5,0,0"
-                      HorizontalAlignment="Center"/>
-        </StackPanel>
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <!-- Back Button -->
+                <Button Content="← Leave Game" 
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource DangerButtonStyle}"
+                    Padding="15,8"
+                    FontSize="14"
+                    Click="BackButton_Click"/>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="🎯" FontSize="24" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="Trivia Game" 
+                            FontSize="24" 
+                            FontWeight="Bold" 
+                            Foreground="{StaticResource TextPrimaryBrush}"
+                            VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock x:Name="QuestionNumberText" 
+                        Text="Question 1/10" 
+                        FontSize="16"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
 
         <!-- Question and Answers -->
-        <Grid Grid.Row="1" Margin="40,10,40,10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid Margin="40,30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <!-- Question -->
-            <Border Grid.Row="0" 
-                    Background="#FFFFFF" 
-                    CornerRadius="8" 
-                    Padding="20" 
-                    Margin="0,0,0,20"
-                    BorderBrush="#DDDDDD"
-                    BorderThickness="1">
-                <TextBlock x:Name="QuestionText" 
-                           Text="Loading question..." 
-                           TextWrapping="Wrap"
-                           FontSize="20"/>
-            </Border>
+                <!-- Question -->
+                <Border Grid.Row="0" 
+                        Background="{StaticResource SurfaceBrush}" 
+                        CornerRadius="12" 
+                        Padding="30,25" 
+                        Margin="0,0,0,30"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                    <TextBlock x:Name="QuestionText" 
+                               Text="Loading question..." 
+                               TextWrapping="Wrap"
+                               FontSize="22"
+                               FontWeight="Medium"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               LineHeight="30"
+                               TextAlignment="Center"/>
+                </Border>
 
-            <!-- Answers -->
-            <StackPanel Grid.Row="1" x:Name="AnswersPanel">
-                <!-- Answer buttons will be added here programmatically -->
-            </StackPanel>
-        </Grid>
+                <!-- Answers -->
+                <StackPanel Grid.Row="1" x:Name="AnswersPanel" MaxWidth="600">
+                    <!-- Answer buttons will be added here programmatically -->
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
 
         <!-- Timer -->
         <Border Grid.Row="2" 
-                Background="#FFFFFF" 
-                CornerRadius="8" 
-                Padding="10" 
-                Margin="40,10,40,20"
-                BorderBrush="#DDDDDD"
-                BorderThickness="1">
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <ProgressBar x:Name="TimerProgressBar" 
-                             Grid.Column="0"
-                             Height="20"
-                             Value="100"
-                             Foreground="#3498DB"/>
+                <Border Grid.Column="0" 
+                        Background="{StaticResource BackgroundBrush}"
+                        CornerRadius="10"
+                        Height="20">
+                    <ProgressBar x:Name="TimerProgressBar" 
+                                 Height="20"
+                                 Value="100"
+                                 Background="Transparent"
+                                 BorderThickness="0">
+                        <ProgressBar.Foreground>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#2ECC71" Offset="0"/>
+                                <GradientStop Color="#F39C12" Offset="0.7"/>
+                                <GradientStop Color="#E74C3C" Offset="1"/>
+                            </LinearGradientBrush>
+                        </ProgressBar.Foreground>
+                    </ProgressBar>
+                </Border>
 
-                <TextBlock x:Name="TimerText" 
-                           Grid.Column="1"
-                           Text="20s" 
-                           FontSize="16"
-                           Margin="10,0,0,0"
-                           VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="20,0,0,0">
+                    <TextBlock Text="⏱️" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock x:Name="TimerText" 
+                               Text="20s" 
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

@@ -47,9 +47,9 @@ namespace client_gui
                     {
                         App.m_username = UsernameTextBox.Text;
 
-                        // Initialize crypto system with the username
-                        App.InitializeCrypto(App.m_username);
-                        Console.WriteLine($"Crypto initialized for user: {App.m_username}");
+                        // No more crypto initialization
+                        Console.WriteLine($"Login successful for user: {App.m_username}");
+
 
                         OnLoginSuccess?.Invoke(this, new LoginSuccessEventArgs { Username = UsernameTextBox.Text });
                     }
@@ -73,6 +73,11 @@ namespace client_gui
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 OnLoginFailed?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new loginChoice());
         }
     }
 }

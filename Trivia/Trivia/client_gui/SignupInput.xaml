@@ -3,63 +3,99 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="SignupInput">
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="Sign Up">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                
+                <Border Grid.Row="1" 
+                        Background="{StaticResource SurfaceBrush}" 
+                        CornerRadius="16" 
+                        Padding="50,40"
+                        MaxWidth="500"
+                        HorizontalAlignment="Center">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" 
+                                          Direction="315" 
+                                          ShadowDepth="5" 
+                                          BlurRadius="15" 
+                                          Opacity="0.1"/>
+                    </Border.Effect>
+                    
+                    <StackPanel>
+                        <TextBlock Text="Join the Game!" 
+                                   FontSize="32" 
+                                   FontWeight="Bold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,0,0,40"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Username" Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="UsernameBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Username"/>
 
-            <StackPanel Grid.Row="1" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" >
-                <TextBlock Text="Sign Up" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Password" Style="{StaticResource ModernLabelStyle}"/>
+                            <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="PasswordBox" Style="{StaticResource ModernPasswordBoxStyle}" ToolTip="Password must have at least 8 characters with uppercase, lowercase, digit, and special character"/>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Email" Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="EmailBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Email format: name@domain.com"/>
 
-                <TextBlock Text="Username:" Margin="0,5,0,0"/>
-                <TextBox x:Name="UsernameBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>Username</TextBox.ToolTip>
-                </TextBox>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Street" Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="StreetBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Street (letters only)"/>
 
-                <TextBlock Text="Password:" Margin="0,5,0,0"/>
-                <PasswordBox x:Name="PasswordBox" Height="30" Margin="0,5">
-                    <PasswordBox.ToolTip>Password must have at least 8 characters with uppercase, lowercase, digit, and special character</PasswordBox.ToolTip>
-                </PasswordBox>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Apt Number" Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" x:Name="AptNumberBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Apartment number (digits only)"/>
 
-                <TextBlock Text="Email:" Margin="0,5,0,0"/>
-                <TextBox x:Name="EmailBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>Email format: name@domain.com</TextBox.ToolTip>
-                </TextBox>
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="City" Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" x:Name="CityBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="City (letters only)"/>
 
-                <TextBlock Text="Street:" Margin="0,5,0,0"/>
-                <TextBox x:Name="StreetBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>Street (letters only)</TextBox.ToolTip>
-                </TextBox>
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Phone" Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" x:Name="PhoneBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Phone format: Starts with 0 followed by 2-3 digit prefix and 7 digits"/>
+                            
+                            <TextBlock Grid.Row="7" Grid.Column="0" 
+                                    Text="Birth Date" 
+                                    Style="{StaticResource ModernLabelStyle}"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" 
+                                    x:Name="BirthDateBox" 
+                                    Style="{StaticResource ModernTextBoxStyle}" 
+                                    ToolTip="Format: dd/mm/yyyy (e.g., 15/06/1990)"
+                                    Text="15/06/1990"/>
 
-                <TextBlock Text="Apartment Number:" Margin="0,5,0,0"/>
-                <TextBox x:Name="AptNumberBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>Apartment number (digits only)</TextBox.ToolTip>
-                </TextBox>
-
-                <TextBlock Text="City:" Margin="0,5,0,0"/>
-                <TextBox x:Name="CityBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>City (letters only)</TextBox.ToolTip>
-                </TextBox>
-
-                <TextBlock Text="Phone:" Margin="0,5,0,0"/>
-                <TextBox x:Name="PhoneBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>Phone format: Starts with 0 followed by 2-3 digit prefix and 7 digits</TextBox.ToolTip>
-                </TextBox>
-
-                <TextBlock Text="Birth Date:" Margin="0,5,0,0"/>
-                <TextBox x:Name="BirthDateBox" Height="30" Margin="0,5">
-                    <TextBox.ToolTip>Format: dd/mm/yyyy</TextBox.ToolTip>
-                </TextBox>
-
-                <Button Content="Sign Up" Click="SignUp_Click" Height="35" Margin="0,10,0,20" />
-            </StackPanel>
-        </Grid>
-    </ScrollViewer>
+                        </Grid>
+                        
+                        <Button Content="Create Account" 
+                                Height="55" 
+                                FontSize="18"
+                                Style="{StaticResource ModernButtonStyle}"
+                                Margin="0,30,0,0"
+                                Click="SignUp_Click"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
 </Page>

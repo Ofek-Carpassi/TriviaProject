@@ -23,12 +23,10 @@ public:
     virtual int getPlayerScore(string username) const override;
     virtual wordList getHighScores() const override;
     virtual double getAverageAnswerTime(const std::string& username) const override;
-
-	// Encryption methods
-	virtual bool saveUserCryptoKey(const std::string& userId, const std::string& key, size_t position) override;
-	virtual bool getUserCryptoKey(const std::string& userId, std::string& keyOut, size_t& positionOut) override;
+    virtual bool addQuestion(const std::string& question, const std::string& correct_answer, const std::vector<std::string>& wrong_answers) override;
 
 private:
     sqlite3* m_db;
     std::string m_dbFileName;
+    void addDefaultQuestion() const;
 };

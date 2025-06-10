@@ -5,12 +5,65 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="loginChoice">
+      d:DesignHeight="700" d:DesignWidth="1000"
+      Title="Welcome to Trivia">
 
-    <Grid>
-        <Button Content="Login" HorizontalAlignment="Left" Margin="278,128,0,0" VerticalAlignment="Top" Height="41" Width="205" Click="Login"/>
-        <Button Content="Signup" HorizontalAlignment="Left" Margin="278,199,0,0" VerticalAlignment="Top" Height="43" Width="205" Click="Signup"/>
-
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Main Content -->
+        <Border Grid.Row="1" 
+                Background="{StaticResource SurfaceBrush}" 
+                CornerRadius="16" 
+                Padding="60,40"
+                MaxWidth="500"
+                HorizontalAlignment="Center">
+            <!-- FIX: Replace Effect with proper DropShadowEffect -->
+            <Border.Effect>
+                <DropShadowEffect Color="Black" 
+                                  Direction="315" 
+                                  ShadowDepth="5" 
+                                  BlurRadius="15" 
+                                  Opacity="0.1"/>
+            </Border.Effect>
+            
+            <StackPanel>
+                <!-- Logo/Title -->
+                <TextBlock Text="🧠" 
+                          FontSize="72" 
+                          HorizontalAlignment="Center" 
+                          Margin="0,0,0,20"/>
+                
+                <TextBlock Text="Trivia Master" 
+                          FontSize="32" 
+                          FontWeight="Bold" 
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          HorizontalAlignment="Center" 
+                          Margin="0,0,0,10"/>
+                
+                <TextBlock Text="Test your knowledge and challenge your friends!" 
+                          FontSize="16" 
+                          Foreground="{StaticResource TextSecondaryBrush}"
+                          HorizontalAlignment="Center" 
+                          TextAlignment="Center"
+                          Margin="0,0,0,40"/>
+                
+                <!-- Buttons -->
+                <Button Content="Login" 
+                       Height="50" 
+                       Margin="0,0,0,15" 
+                       Style="{StaticResource ModernButtonStyle}"
+                       Click="Login"/>
+                
+                <Button Content="Sign Up" 
+                       Height="50" 
+                       Style="{StaticResource SecondaryButtonStyle}"
+                       Click="Signup"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

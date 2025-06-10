@@ -1,17 +1,9 @@
 #include "JsonResponsePacketSerializer.h"
 #include "json.hpp"  // Include the JSON library
 #include "messageCodes.h"
+#include "BinaryUtils.h"
 
 using json = nlohmann::json;
-
-Buffer ConvertToBinaryFourBytes(int val) {
-    Buffer binaryNumber(4);
-    for (int i = 0; i < 4; ++i) {
-        binaryNumber[3 - i] = static_cast<Byte>(val & 0xFF); // Extract lowest byte
-        val >>= 8; // Shift right by 8 bits
-    }
-    return binaryNumber;
-}
 
 Buffer JsonResponsePacketSerializer::serializeLoginResponse(Response msg) {
     // Create JSON object
@@ -555,4 +547,32 @@ Buffer JsonResponsePacketSerializer::serializeGetQuestionResponse(GetQuestionRes
     ret_val.insert(ret_val.end(), jsonStr.begin(), jsonStr.end());
 
     return ret_val;
+}
+
+Buffer JsonResponsePacketSerializer::serializeResponse(const Response& response, unsigned char messageCode)
+{
+    json j;
+    j["status"] = response.status;
+    if (!response.message.empty())
+        j["message"] = response.message;
+
+    std::string jsonStr = j.dump();
+
+    // Create result buffer
+    Buffer result;
+    result.push_back(messageCode);
+
+    // Add 4 bytes of length
+    std::vector<unsigned char> lengthBytes(4);
+    lengthBytes[0] = static_cast<unsigned char>((jsonStr.length() >> 24) & 0xFF);
+    lengthBytes[1] = static_cast<unsigned char>((jsonStr.length() >> 16) & 0xFF);
+    lengthBytes[2] = static_cast<unsigned char>((jsonStr.length() >> 8) & 0xFF);
+    lengthBytes[3] = static_cast<unsigned char>(jsonStr.length() & 0xFF);
+
+    result.insert(result.end(), lengthBytes.begin(), lengthBytes.end());
+
+    // Add the JSON data
+    result.insert(result.end(), jsonStr.begin(), jsonStr.end());
+
+    return result;
 }

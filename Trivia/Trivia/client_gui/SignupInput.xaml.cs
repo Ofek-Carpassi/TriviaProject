@@ -56,6 +56,87 @@ namespace client_gui
             return true;
         }
 
+        private void SignUp_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!ValidateInputs())
+                {
+                    return;
+                }
+
+                // Disable the button to prevent double-clicking
+                ((Button)sender).IsEnabled = false;
+
+                // Get birth date text from TextBox (since we changed from DatePicker to TextBox)
+                string birthDateText = BirthDateBox.Text.Trim();
+
+                // Create signup data with all required fields
+                var signupData = new
+                {
+                    username = UsernameBox.Text,
+                    password = PasswordBox.Password,
+                    email = EmailBox.Text,
+                    street = StreetBox.Text,
+                    aptNumber = AptNumberBox.Text,
+                    city = CityBox.Text,
+                    phone = PhoneBox.Text,
+                    birthDate = birthDateText
+                };
+
+                string jsonString = JsonConvert.SerializeObject(signupData);
+                Console.WriteLine($"Signup data: {jsonString}");
+
+                byte[] msg = Serialization.BuildMessage(MessageCodes.SIGNUP_CODE, jsonString);
+
+                try
+                {
+                    if (!App.CommunicatorMutex.WaitOne(5000)) // 5 second timeout
+                    {
+                        throw new TimeoutException("Could not acquire communication mutex");
+                    }
+
+                    Console.WriteLine("Sending signup request...");
+                    Communicator.Send(msg);
+                    Console.WriteLine("Waiting for server response...");
+
+                    var responseData = Communicator.Receive();
+                    Console.WriteLine($"Received response: Status={responseData.status}, JSON={responseData.json}");
+
+                    Response resp = Deserializer.DeserializeResponse(responseData);
+
+                    if (resp.Status == MessageCodes.SIGNUP_RESPONSE_CODE)
+                    {
+                        App.m_username = UsernameBox.Text;
+                        Console.WriteLine($"Signup successful for user: {App.m_username}");
+                        OnSignupSuccess?.Invoke(this, new SignupSuccessEventArgs { Username = UsernameBox.Text });
+                    }
+                    else
+                    {
+                        string errorMessage = resp is ErrorResponse error ? error.message : "Signup failed.";
+                        Console.WriteLine($"Signup failed: {errorMessage}");
+                        MessageBox.Show(errorMessage, "Signup Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                        OnSignupFailed?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+                finally
+                {
+                    // Always release the mutex and re-enable the button
+                    App.CommunicatorMutex.ReleaseMutex();
+                    ((Button)sender).IsEnabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Signup error: {ex.GetType().Name} - {ex.Message}");
+                MessageBox.Show($"Signup error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                OnSignupFailed?.Invoke(this, EventArgs.Empty);
+
+                // Re-enable the button on error
+                ((Button)sender).IsEnabled = true;
+            }
+        }
+
         private bool ValidateInputs()
         {
             // Check for empty fields
@@ -72,12 +153,20 @@ namespace client_gui
                 return false;
             }
 
-            // Password validation with better feedback
+            // Validate birth date format (dd/mm/yyyy or dd-mm-yyyy or dd.mm.yyyy)
+            if (!IsValidBirthDate(BirthDateBox.Text))
+            {
+                MessageBox.Show("Invalid birth date format. Please use dd/mm/yyyy format (e.g., 15/06/1990).",
+                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            // Password validation
             if (!ValidatePassword(PasswordBox.Password))
                 return false;
 
             // Email validation
-            var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+            var emailRegex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
             if (!emailRegex.IsMatch(EmailBox.Text))
             {
                 MessageBox.Show("Invalid email format. Email must be in the format name@domain.com",
@@ -85,122 +174,37 @@ namespace client_gui
                 return false;
             }
 
-            // Street validation - letters only
-            var streetRegex = new Regex(@"^[a-zA-Z\s]+$");
-            if (!streetRegex.IsMatch(StreetBox.Text))
-            {
-                MessageBox.Show("Street must contain only letters.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            // Apartment validation - numbers only
-            var aptRegex = new Regex(@"^\d+$");
-            if (!aptRegex.IsMatch(AptNumberBox.Text))
-            {
-                MessageBox.Show("Apartment number must be a number.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            // City validation - letters only
-            var cityRegex = new Regex(@"^[a-zA-Z\s]+$");
-            if (!cityRegex.IsMatch(CityBox.Text))
-            {
-                MessageBox.Show("City must contain only letters.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            // Phone validation - starts with 0, followed by 2-3 digit prefix and 7 digits
-            var phoneRegex = new Regex(@"^0(\d{2}|\d{3})\d{7}$");
-            if (!phoneRegex.IsMatch(PhoneBox.Text))
-            {
-                MessageBox.Show("Phone must start with 0 followed by 2-3 digit prefix and 7 digits.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            // Birth date validation - dd/mm/yyyy format
-            var dateRegex = new Regex(@"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$");
-            if (!dateRegex.IsMatch(BirthDateBox.Text))
-            {
-                MessageBox.Show("Birth date must be in dd/mm/yyyy format.",
-                    "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
             return true;
         }
 
-        private void SignUp_Click(object sender, RoutedEventArgs e)
+        private bool IsValidBirthDate(string dateText)
         {
-            try
+            if (string.IsNullOrWhiteSpace(dateText))
+                return false;
+
+            // Try to parse different date formats
+            string[] formats = { "dd/MM/yyyy", "dd-MM-yyyy", "dd.MM.yyyy", "MM/dd/yyyy" };
+
+            foreach (string format in formats)
             {
-                if (!ValidateInputs())
+                if (DateTime.TryParseExact(dateText, format, null, System.Globalization.DateTimeStyles.None, out DateTime result))
                 {
-                    return;
-                }
-
-                // Create signup data with all required fields
-                var signupData = new
-                {
-                    username = UsernameBox.Text,
-                    password = PasswordBox.Password,
-                    email = EmailBox.Text,
-                    street = StreetBox.Text,
-                    aptNumber = AptNumberBox.Text,
-                    city = CityBox.Text,
-                    phone = PhoneBox.Text,
-                    birthDate = BirthDateBox.Text
-                };
-
-                string jsonString = JsonConvert.SerializeObject(signupData);
-                Console.WriteLine($"Signup data: {jsonString}");
-
-                byte[] msg = Serialization.BuildMessage(MessageCodes.SIGNUP_CODE, jsonString);
-
-                try
-                {
-                    App.CommunicatorMutex.WaitOne();
-                    Console.WriteLine("Sending signup request...");
-                    Communicator.Send(msg);
-                    Console.WriteLine("Waiting for server response...");
-                    var responseData = Communicator.Receive();
-                    Console.WriteLine($"Received response: Status={responseData.status}, JSON={responseData.json}");
-
-                    Response resp = Deserializer.DeserializeResponse(responseData);
-
-                    if (resp.Status == MessageCodes.SIGNUP_RESPONSE_CODE)
+                    // Check if the date is reasonable (not in the future, not too old)
+                    if (result <= DateTime.Now && result >= DateTime.Now.AddYears(-120))
                     {
-                        App.m_username = UsernameBox.Text;
-
-                        // Initialize crypto system with the username
-                        App.InitializeCrypto(App.m_username);
-                        Console.WriteLine($"Crypto initialized for user: {App.m_username}");
-
-                        OnSignupSuccess?.Invoke(this, new SignupSuccessEventArgs { Username = UsernameBox.Text });
-                    }
-                    else
-                    {
-                        string errorMessage = resp is ErrorResponse error ? error.message : "Signup failed.";
-                        Console.WriteLine($"Signup failed: {errorMessage}");
-                        MessageBox.Show(errorMessage, "Signup Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                        OnSignupFailed?.Invoke(this, EventArgs.Empty);
+                        return true;
                     }
                 }
-                finally
-                {
-                    if (App.CommunicatorMutex.WaitOne(0))
-                        App.CommunicatorMutex.ReleaseMutex();
-                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Signup error: {ex.GetType().Name} - {ex.Message}");
-                MessageBox.Show($"Signup error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                OnSignupFailed?.Invoke(this, EventArgs.Empty);
-            }
+
+            return false;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService?.Navigate(new loginChoice());
         }
     }
+
+
 }

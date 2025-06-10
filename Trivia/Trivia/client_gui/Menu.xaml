@@ -5,19 +5,136 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Menu">
+      d:DesignHeight="700" d:DesignWidth="1000"
+      Title="Main Menu">
 
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
-            <TextBlock Text="Main Menu" FontSize="28" FontWeight="Bold" TextAlignment="Center" Margin="0 0 0 30"/>
-            <Button Content="Create Room" Height="50" Margin="0 0 0 15" Click="CreateRoom_Click"/>
-            <Button Content="Join Room" Height="50" Margin="0 0 0 15" Click="JoinRoom_Click"/>
-            <Button Content="Statistics" Height="50" Margin="0 0 0 15"/>
-            <Button Content="Exit" Height="50" Click="Exit_Click"/>
-            <Button Content="Add New Question" Width="200" Height="45" Margin="0,10,0,10" Click="AddQuestion_Click"/>
-            <Button Content="Head to Head Mode" Width="200" Height="45" Background="#FF5722" Foreground="White" Margin="0,10,0,10" Click="HeadToHead_Click"/>
-        </StackPanel>
-
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock Text="Trivia Master" 
+                          FontSize="24" 
+                          FontWeight="Bold" 
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          VerticalAlignment="Center"/>
+                <Button Content="Logout" 
+                       HorizontalAlignment="Right"
+                       Style="{StaticResource DangerButtonStyle}"
+                       Padding="20,8"
+                       Click="Exit_Click"/>
+            </Grid>
+        </Border>
+        
+        <!-- Menu Options -->
+        <Grid Grid.Row="1" Margin="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Create Room -->
+            <Border Grid.Row="0" Grid.Column="0"
+                    Background="{StaticResource SurfaceBrush}"
+                    CornerRadius="12"
+                    Margin="10"
+                    Cursor="Hand">
+                <Button Background="Transparent"
+                       BorderThickness="0"
+                       Click="CreateRoom_Click"
+                       Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="🏠" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="Create Room" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock Text="Start a new trivia game" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+            
+            <!-- Join Room -->
+            <Border Grid.Row="0" Grid.Column="1"
+                    Background="{StaticResource SurfaceBrush}"
+                    CornerRadius="12"
+                    Margin="10"
+                    Cursor="Hand">
+                <Button Background="Transparent"
+                       BorderThickness="0"
+                       Click="JoinRoom_Click"
+                       Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="🚪" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="Join Room" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock Text="Join an existing game" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+            
+            <!-- Head to Head -->
+            <Border Grid.Row="1" Grid.Column="0"
+                    Background="{StaticResource SurfaceBrush}"
+                    CornerRadius="12"
+                    Margin="10"
+                    Cursor="Hand">
+                <Button Background="Transparent"
+                       BorderThickness="0"
+                       Click="HeadToHead_Click"
+                       Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="⚔️" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="Head to Head" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock Text="1v1 quick match" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+            
+            <!-- Statistics -->
+            <Border Grid.Row="1" Grid.Column="1"
+                    Background="{StaticResource SurfaceBrush}"
+                    CornerRadius="12"
+                    Margin="10"
+                    Cursor="Hand">
+                <Button Background="Transparent"
+                    BorderThickness="0"
+                    Padding="20"
+                    Click="Statistics_Click">
+                    <StackPanel>
+                        <TextBlock Text="📊" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="Statistics" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock Text="View your progress" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+            
+            <!-- Add Question -->
+            <Border Grid.Row="2" Grid.Column="0"
+                    Background="{StaticResource SurfaceBrush}"
+                    CornerRadius="12"
+                    Margin="10"
+                    Cursor="Hand">
+                <Button Background="Transparent"
+                       BorderThickness="0"
+                       Click="AddQuestion_Click"
+                       Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="➕" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                        <TextBlock Text="Add Question" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock Text="Contribute to the game" FontSize="14" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

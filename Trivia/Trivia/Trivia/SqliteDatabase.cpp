@@ -215,8 +215,8 @@ bool SqliteDatabase::doesPasswordMatch(const std::string& username, const std::s
 }
 
 bool SqliteDatabase::addNewUser(
-    const std::string& username, 
-    const std::string& password, 
+    const std::string& username,
+    const std::string& password,
     const std::string& email,
     const std::string& street,
     const std::string& aptNumber,
@@ -269,7 +269,7 @@ bool SqliteDatabase::addNewUser(
     // Add the new user
     std::string query =
         "INSERT INTO USERS (USERNAME, PASSWORD, EMAIL, STREET, APT_NUMBER, CITY, PHONE, BIRTH_DATE) VALUES ('" +
-        username + "', '" + password + "', '" + email + "', '" + street + "', '" + 
+        username + "', '" + password + "', '" + email + "', '" + street + "', '" +
         aptNumber + "', '" + city + "', '" + phone + "', '" + birthDate + "');";
 
     char* errMsg = nullptr;
@@ -284,7 +284,7 @@ bool SqliteDatabase::addNewUser(
     return true;
 }
 
-std::vector<Question> SqliteDatabase::getQuestions(int questionsAmount) const 
+std::vector<Question> SqliteDatabase::getQuestions(int questionsAmount) const
 {
     std::vector<Question> ret_val;
     sqlite3_stmt* stmt;
@@ -295,37 +295,170 @@ std::vector<Question> SqliteDatabase::getQuestions(int questionsAmount) const
         return ret_val;
     }
 
-    // SQL query to fetch random questions
-    const char* sql = "SELECT question, answer1, answer2, answer3, answer4, correct_index FROM questions ORDER BY RANDOM() LIMIT ?;";
+    // First check if we have any questions at all
+    const char* countSql = "SELECT COUNT(*) FROM QUESTIONS;";
+    if (sqlite3_prepare_v2(m_db, countSql, -1, &stmt, nullptr) == SQLITE_OK) {
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int count = sqlite3_column_int(stmt, 0);
+            std::cout << "Found " << count << " question(s) in the database.\n";
+            if (count == 0) {
+                sqlite3_finalize(stmt);
+                // Add a default question if none exist
+                addDefaultQuestion();
 
-    // Prepare the SQL statement
-    if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) == SQLITE_OK) {
-        // Bind the question amount to the query
-        sqlite3_bind_int(stmt, 1, questionsAmount);
-
-        // Loop through the results
-        while (sqlite3_step(stmt) == SQLITE_ROW) {
-            std::string questionText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-            wordList answers;
-            answers.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-            answers.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
-            answers.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
-            answers.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
-            int correctIndex = sqlite3_column_int(stmt, 5);
-
-            // Construct a Question object and add it to the result vector
-            Question q(questionText, answers, correctIndex);
-            ret_val.push_back(q);
+                // Check again after adding default question
+                if (sqlite3_prepare_v2(m_db, countSql, -1, &stmt, nullptr) == SQLITE_OK) {
+                    if (sqlite3_step(stmt) == SQLITE_ROW) {
+                        count = sqlite3_column_int(stmt, 0);
+                        std::cout << "After adding default: Found " << count << " question(s) in the database.\n";
+                    }
+                    sqlite3_finalize(stmt);
+                }
+            }
+            else {
+                sqlite3_finalize(stmt);
+            }
+        }
+        else {
+            sqlite3_finalize(stmt);
         }
     }
+
+    // For debugging, print the table schema
+    sqlite3_stmt* schemaStmt;
+    const char* schemaSql = "PRAGMA table_info(QUESTIONS);";
+    if (sqlite3_prepare_v2(m_db, schemaSql, -1, &schemaStmt, nullptr) == SQLITE_OK) {
+        std::cout << "QUESTIONS table columns:\n";
+        while (sqlite3_step(schemaStmt) == SQLITE_ROW) {
+            std::cout << " - " << reinterpret_cast<const char*>(sqlite3_column_text(schemaStmt, 1)) << "\n";
+        }
+        sqlite3_finalize(schemaStmt);
+    }
+
+    // For debugging, print first few rows
+    std::cout << "First few questions in the database:\n";
+    const char* debugSql = "SELECT QUESTION_ID, QUESTION FROM QUESTIONS LIMIT 3;";
+    if (sqlite3_prepare_v2(m_db, debugSql, -1, &stmt, nullptr) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            int id = sqlite3_column_int(stmt, 0);
+            const char* question = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            std::cout << "ID: " << id << ", Question: " << (question ? question : "NULL") << "\n";
+        }
+        sqlite3_finalize(stmt);
+    }
     else {
-        std::cerr << "Failed to prepare statement.\n";
+        std::cerr << "Debug query failed: " << sqlite3_errmsg(m_db) << "\n";
+    }
+
+    // SQL query to fetch random questions - make sure column names match exactly
+    const char* sql = "SELECT QUESTION, CORRECT_ANSWER, ANSWER2, ANSWER3, ANSWER4 FROM QUESTIONS ORDER BY RANDOM() LIMIT ?;";
+
+    // Prepare the SQL statement
+    int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(m_db) << "\n";
+
+        // Also try with quoted identifiers in case they're needed
+        sql = "SELECT \"QUESTION\", \"CORRECT_ANSWER\", \"ANSWER2\", \"ANSWER3\", \"ANSWER4\" FROM QUESTIONS ORDER BY RANDOM() LIMIT ?;";
+        rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+
+        if (rc != SQLITE_OK) {
+            std::cerr << "Alternative query also failed: " << sqlite3_errmsg(m_db) << "\n";
+            goto add_default_question;
+        }
+    }
+
+    std::cout << "Statement prepared successfully\n";
+
+    // Bind the question amount to the query
+    rc = sqlite3_bind_int(stmt, 1, questionsAmount);
+    if (rc != SQLITE_OK) {
+        std::cerr << "Failed to bind parameter: " << sqlite3_errmsg(m_db) << "\n";
+        sqlite3_finalize(stmt);
+        goto add_default_question;
+    }
+
+    std::cout << "Parameter bound successfully\n";
+
+    // Loop through the results
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        // Check if we have valid data
+        if (sqlite3_column_text(stmt, 0) == nullptr) {
+            std::cerr << "NULL question text found, skipping\n";
+            continue;
+        }
+
+        // Extract data
+        std::string questionText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        wordList answers;
+
+        // First answer is the correct one
+        if (sqlite3_column_text(stmt, 1) != nullptr) {
+            std::string correctAnswer = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            answers.push_back(correctAnswer);
+        }
+        else {
+            answers.push_back("Default correct answer");
+        }
+
+        // Add wrong answers
+        for (int i = 2; i <= 4; i++) {
+            if (sqlite3_column_text(stmt, i) != nullptr) {
+                answers.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, i)));
+            }
+            else {
+                answers.push_back("No answer"); // Default if NULL
+            }
+        }
+
+        // The correct answer is always at index 0 in our answers list
+        const int correctIndex = 0;
+
+        // Construct a Question object and add it to the result vector
+        Question q(questionText, answers, correctIndex);
+        ret_val.push_back(q);
+
+        std::cout << "Added question: " << questionText << "\n";
+    }
+
+    if (rc != SQLITE_DONE) {
+        std::cerr << "Error during step: " << sqlite3_errmsg(m_db) << "\n";
     }
 
     // Clean up
     sqlite3_finalize(stmt);
 
+add_default_question:
+    // If we still don't have questions, create a default one
+    if (ret_val.empty()) {
+        std::cout << "No question returned, adding default question.\n";
+        wordList defaultAnswers = { "C++", "Java", "Python", "Ruby" };
+        Question defaultQ("What programming language is this project's server written in?", defaultAnswers, 0);
+        ret_val.push_back(defaultQ);
+    }
+    else {
+        std::cout << "Retrieved " << ret_val.size() << " questions from database\n";
+    }
+
     return ret_val;
+}
+
+void SqliteDatabase::addDefaultQuestion() const
+{
+    const char* sql = "INSERT INTO QUESTIONS (QUESTION, CORRECT_ANSWER, ANSWER2, ANSWER3, ANSWER4) "
+        "VALUES ('What programming language is this project''s server written in?', "
+        "'C++', 'Java', 'Python', 'Ruby');";
+
+    char* errMsg = nullptr;
+    int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "Failed to add default question: " << errMsg << std::endl;
+        sqlite3_free(errMsg);
+    }
+    else {
+        std::cout << "Added default question to database.\n";
+    }
 }
 
 int SqliteDatabase::getNumOfCorrectAnswers(std::string username) const
@@ -413,12 +546,12 @@ wordList SqliteDatabase::getHighScores() const
 {
     wordList highScores;
     std::string query = "SELECT user_id, COUNT(*) as correct_count "
-                        "FROM user_statistics "
-                        "WHERE is_correct = 1 "
-                        "GROUP BY user_id "
-                        "ORDER BY correct_count DESC "
-                        "LIMIT 5;";
-    
+        "FROM user_statistics "
+        "WHERE is_correct = 1 "
+        "GROUP BY user_id "
+        "ORDER BY correct_count DESC "
+        "LIMIT 5;";
+
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(m_db, query.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -431,84 +564,50 @@ wordList SqliteDatabase::getHighScores() const
     return highScores;
 }
 
-bool SqliteDatabase::saveUserCryptoKey(const std::string& userId, const std::string& key, size_t position)
+bool SqliteDatabase::addQuestion(const std::string& question, const std::string& correct_answer, const std::vector<std::string>& wrong_answers)
 {
-    // First, check if a table for crypto keys exists
-    const char* createCryptoTable =
-        "CREATE TABLE IF NOT EXISTS CRYPTO_KEYS ("
-        "USER_ID TEXT PRIMARY KEY NOT NULL, "
-        "KEY_DATA BLOB NOT NULL, "
-        "POSITION INTEGER NOT NULL);";
+    try
+    {
+        // Start a transaction
+        sqlite3_exec(m_db, "BEGIN TRANSACTION", nullptr, nullptr, nullptr);
 
-    char* errMsg = nullptr;
-    int result = sqlite3_exec(m_db, createCryptoTable, nullptr, nullptr, &errMsg);
+        // Make sure we have exactly 3 wrong answers
+        if (wrong_answers.size() < 3) {
+            throw std::exception("Need at least 3 wrong answers");
+        }
 
-    if (result != SQLITE_OK) {
-        std::cerr << "Error creating crypto keys table: " << errMsg << std::endl;
-        sqlite3_free(errMsg);
-        return false;
-    }
+        // Insert the question with all answers in one statement
+        std::string sql = "INSERT INTO QUESTIONS (QUESTION, CORRECT_ANSWER, ANSWER2, ANSWER3, ANSWER4) VALUES (?, ?, ?, ?, ?);";
+        sqlite3_stmt* stmt;
 
-    // Now save or update the key
-    std::string query = "INSERT OR REPLACE INTO CRYPTO_KEYS (USER_ID, KEY_DATA, POSITION) VALUES (?, ?, ?);";
+        if (sqlite3_prepare_v2(m_db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+            throw std::exception("Failed to prepare question insert");
 
-    sqlite3_stmt* stmt = nullptr;
-    result = sqlite3_prepare_v2(m_db, query.c_str(), -1, &stmt, nullptr);
+        sqlite3_bind_text(stmt, 1, question.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, correct_answer.c_str(), -1, SQLITE_STATIC);
 
-    if (result != SQLITE_OK) {
-        std::cerr << "Error preparing statement: " << sqlite3_errmsg(m_db) << std::endl;
-        return false;
-    }
+        // Bind the wrong answers
+        for (int i = 0; i < 3 && i < wrong_answers.size(); i++) {
+            sqlite3_bind_text(stmt, 3 + i, wrong_answers[i].c_str(), -1, SQLITE_STATIC);
+        }
 
-    // Bind parameters
-    sqlite3_bind_text(stmt, 1, userId.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_blob(stmt, 2, key.data(), static_cast<int>(key.size()), SQLITE_STATIC);
-    sqlite3_bind_int64(stmt, 3, static_cast<sqlite3_int64>(position));
+        if (sqlite3_step(stmt) != SQLITE_DONE)
+            throw std::exception("Failed to insert question");
 
-    // Execute
-    result = sqlite3_step(stmt);
-    sqlite3_finalize(stmt);
-
-    if (result != SQLITE_DONE) {
-        std::cerr << "Error saving crypto key: " << sqlite3_errmsg(m_db) << std::endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool SqliteDatabase::getUserCryptoKey(const std::string& userId, std::string& keyOut, size_t& positionOut)
-{
-    std::string query = "SELECT KEY_DATA, POSITION FROM CRYPTO_KEYS WHERE USER_ID = ?;";
-
-    sqlite3_stmt* stmt = nullptr;
-    int result = sqlite3_prepare_v2(m_db, query.c_str(), -1, &stmt, nullptr);
-
-    if (result != SQLITE_OK) {
-        std::cerr << "Error preparing statement: " << sqlite3_errmsg(m_db) << std::endl;
-        return false;
-    }
-
-    // Bind parameter
-    sqlite3_bind_text(stmt, 1, userId.c_str(), -1, SQLITE_STATIC);
-
-    // Execute
-    result = sqlite3_step(stmt);
-
-    if (result == SQLITE_ROW) {
-        // Get the key data
-        const void* keyData = sqlite3_column_blob(stmt, 0);
-        int keySize = sqlite3_column_bytes(stmt, 0);
-        keyOut.assign(static_cast<const char*>(keyData), keySize);
-
-        // Get the position
-        positionOut = static_cast<size_t>(sqlite3_column_int64(stmt, 1));
-
+        // Get the last inserted question ID
+        int questionId = sqlite3_last_insert_rowid(m_db);
         sqlite3_finalize(stmt);
+
+        // Commit the transaction
+        sqlite3_exec(m_db, "COMMIT", nullptr, nullptr, nullptr);
+
+        std::cout << "Question added successfully with ID: " << questionId << std::endl;
         return true;
     }
-    else {
-        sqlite3_finalize(stmt);
+    catch (const std::exception& e)
+    {
+        std::cout << "Failed to add question: " << e.what() << std::endl;
+        sqlite3_exec(m_db, "ROLLBACK", nullptr, nullptr, nullptr);
         return false;
     }
 }

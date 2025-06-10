@@ -5,60 +5,84 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="LoginInput">
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="Login">
 
-    <Grid>
+    <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="300" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        <!-- Back Button -->
+        <Button Grid.Row="0" 
+               Content="← Back" 
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Style="{StaticResource ModernButtonStyle}"
+               Padding="15,8"
+               FontSize="14"
+               Margin="20,20,0,0"
+               Click="BackButton_Click"/>
 
-        <!-- Username Label -->
-        <TextBlock Text="Username:"
-                   Grid.Row="1" Grid.Column="1"
-                   Margin="0,10,0,5"
-                   FontSize="16"
-                   HorizontalAlignment="Left"/>
-
-        <!-- Username Input -->
-        <TextBox x:Name="UsernameTextBox"
-                 Grid.Row="1" Grid.Column="1"
-                 Margin="0,35,0,0"
-                 FontSize="16"
-                 HorizontalAlignment="Stretch"/>
-
-        <!-- Password Label -->
-        <TextBlock Text="Password:"
-                   Grid.Row="2" Grid.Column="1"
-                   Margin="0,10,0,5"
-                   FontSize="16"
-                   HorizontalAlignment="Left"/>
-
-        <!-- Password Input -->
-        <PasswordBox x:Name="PasswordBox"
-                     Grid.Row="2" Grid.Column="1"
-                     Margin="0,35,0,0"
-                     FontSize="16"
-                     HorizontalAlignment="Stretch"/>
-
-        <!-- Login Button -->
-        <Button Content="Login"
-                Grid.Row="3" Grid.Column="1"
-                Margin="0,30,0,0"
-                Width="100" Height="40"
-                FontSize="16"
+        <!-- Login Form -->
+        <Border 
+                Background="{StaticResource SurfaceBrush}" 
+                CornerRadius="16" 
+                Padding="50,40"
+                MaxWidth="450"
+                MinWidth="400"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                Click="LoginButton_Click"/>
+                VerticalAlignment="Top" Height="745" Margin="0,37,0,0" Grid.RowSpan="3">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" 
+                                Direction="315" 
+                                ShadowDepth="5" 
+                                BlurRadius="15" 
+                                Opacity="0.1"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Text="Welcome Back!" 
+                          FontSize="32" 
+                          FontWeight="Bold" 
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          HorizontalAlignment="Center" 
+                          Margin="0,0,0,40"/>
+
+                <!-- Username -->
+                <TextBlock Text="Username" 
+                          FontSize="16" 
+                          FontWeight="Medium"
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          Margin="0,0,0,10"/>
+                <TextBox x:Name="UsernameTextBox"
+                        Style="{StaticResource ModernTextBoxStyle}"
+                        Height="80"
+                        FontSize="16"
+                        Margin="0,0,0,25"/>
+
+                <!-- Password -->
+                <TextBlock Text="Password" 
+                          FontSize="16" 
+                          FontWeight="Medium"
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          Margin="0,0,0,10"/>
+                <PasswordBox x:Name="PasswordBox"
+                            Style="{StaticResource ModernPasswordBoxStyle}"
+                            Height="80"
+                            FontSize="16"
+                            Margin="0,0,0,35"/>
+                <Button Content="Sign In" 
+                       Height="55" 
+                       FontSize="18"
+                       Style="{StaticResource ModernButtonStyle}"
+                       Click="LoginButton_Click" RenderTransformOrigin="0.522,1.511"/>
+
+                <!-- Login Button -->
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

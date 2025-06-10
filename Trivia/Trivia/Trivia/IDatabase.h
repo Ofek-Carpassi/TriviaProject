@@ -23,8 +23,5 @@ public:
     virtual int getPlayerScore(string username) const = 0;
     virtual wordList getHighScores() const = 0;
 	virtual double getAverageAnswerTime(const std::string& username) const = 0;
-
-	// Encryption methods
-    virtual bool saveUserCryptoKey(const std::string& userId, const std::string& key, size_t position) = 0;
-    virtual bool getUserCryptoKey(const std::string& userId, std::string& keyOut, size_t& positionOut) = 0;
+	virtual bool addQuestion(const std::string& question, const std::string& correct_answer, const std::vector<std::string>& wrong_answers) = 0;
 };

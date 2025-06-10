@@ -5,26 +5,120 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="CreateRoom">
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="Create Room">
 
-    <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
-            <TextBlock Text="Create Room" FontSize="28" FontWeight="Bold" TextAlignment="Center" Margin="0 0 0 30"/>
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <!-- Back Button -->
+                <Button Content="← Back" 
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource ModernButtonStyle}"
+                    Padding="15,8"
+                    FontSize="14"
+                    Click="BackButton_Click"/>
+                
+                <TextBlock Text="Create New Room" 
+                        FontSize="28" 
+                        FontWeight="Bold" 
+                        Foreground="{StaticResource TextPrimaryBrush}"
+                        HorizontalAlignment="Center"/>
+            </Grid>
+        </Border>
+        
+        <!-- Form Content -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Border Grid.Row="1" 
+                    Background="{StaticResource SurfaceBrush}" 
+                    CornerRadius="16" 
+                    Padding="50,40"
+                    MaxWidth="500"
+                    HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                                    Direction="315" 
+                                    ShadowDepth="5" 
+                                    BlurRadius="15" 
+                                    Opacity="0.1"/>
+                </Border.Effect>
+                
+                <StackPanel>
+                    <!-- Room Name -->
+                    <TextBlock Text="Room Name" 
+                              FontSize="16" 
+                              FontWeight="Medium"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,10"/>
+                    <TextBox x:Name="RoomNameTextBox" 
+                            Style="{StaticResource ModernTextBoxStyle}"
+                            Height="50"
+                            FontSize="16"
+                            Margin="0,0,0,25"/>
 
-            <TextBlock Text="Room Name:" FontSize="16" Margin="0 0 0 5"/>
-            <TextBox x:Name="RoomNameTextBox" Height="30" Margin="0 0 0 15"/>
+                    <!-- Time per Question -->
+                    <TextBlock Text="Time per Question (seconds)" 
+                              FontSize="16" 
+                              FontWeight="Medium"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,10"/>
+                    <TextBox x:Name="TimeTextBox" 
+                            Style="{StaticResource ModernTextBoxStyle}"
+                            Height="50"
+                            FontSize="16"
+                            Text="30"
+                            Margin="0,0,0,25"/>
 
-            <TextBlock Text="Time per Question (sec):" FontSize="16" Margin="0 0 0 5"/>
-            <TextBox x:Name="TimeTextBox" Height="30" Margin="0 0 0 15"/>
+                    <!-- Max Players -->
+                    <TextBlock Text="Maximum Players" 
+                              FontSize="16" 
+                              FontWeight="Medium"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,10"/>
+                    <TextBox x:Name="PlayersTextBox" 
+                            Style="{StaticResource ModernTextBoxStyle}"
+                            Height="50"
+                            FontSize="16"
+                            Text="4"
+                            Margin="0,0,0,25"/>
 
-            <TextBlock Text="Max Players:" FontSize="16" Margin="0 0 0 5"/>
-            <TextBox x:Name="PlayersTextBox" Height="30" Margin="0 0 0 15"/>
+                    <!-- Question Count -->
+                    <TextBlock Text="Number of Questions" 
+                              FontSize="16" 
+                              FontWeight="Medium"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Margin="0,0,0,10"/>
+                    <TextBox x:Name="QuestionCountTextBox" 
+                            Style="{StaticResource ModernTextBoxStyle}"
+                            Height="50"
+                            FontSize="16"
+                            Text="10"
+                            Margin="0,0,0,35"/>
 
-            <TextBlock Text="Question Count:" FontSize="16" Margin="0 0 0 5"/>
-            <TextBox x:Name="QuestionCountTextBox" Height="30" Margin="0 0 0 30"/>
-
-            <Button Content="Create Room" Height="40" Click="CreateRoom_Click"/>
-        </StackPanel>
+                    <!-- Create Button -->
+                    <Button Content="🎮 Create Room" 
+                           Height="55" 
+                           FontSize="18"
+                           Style="{StaticResource ModernButtonStyle}"
+                           Click="CreateRoom_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
