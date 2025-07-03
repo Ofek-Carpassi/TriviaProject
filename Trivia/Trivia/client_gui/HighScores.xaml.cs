@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace client_gui
             InitializeComponent();
             DataContext = new HighScoresViewModel();
         }
-        
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -32,15 +33,10 @@ namespace client_gui
     public class HighScoresViewModel : INotifyPropertyChanged
     {
         private List<ScoreEntry> _topScores = new List<ScoreEntry>();
-
         public List<ScoreEntry> TopScores
         {
             get => _topScores;
-            set
-            {
-                _topScores = value;
-                OnPropertyChanged(nameof(TopScores));
-            }
+            set { _topScores = value; OnPropertyChanged(nameof(TopScores)); }
         }
 
         public HighScoresViewModel()
@@ -50,29 +46,46 @@ namespace client_gui
 
         private void LoadScores()
         {
-            // Sample data - in a real app you'd fetch from server/database
-            var scores = new List<ScoreEntry>
+            try
             {
-                new ScoreEntry { Username = "Player1", Score = 1000 },
-                new ScoreEntry { Username = "Player2", Score = 800 },
-                new ScoreEntry { Username = "Player3", Score = 600 },
-                new ScoreEntry { Username = "Player4", Score = 500 },
-                new ScoreEntry { Username = "Player5", Score = 400 }
-            };
+                App.CommunicatorMutex.WaitOne();
 
-            // Sort by score and assign ranks
-            TopScores = scores.OrderByDescending(s => s.Score)
-                            .Take(10)
-                            .Select((s, i) => new ScoreEntry
-                            {
-                                Username = s.Username,
-                                Score = s.Score
-                            })
-                            .ToList();
+                byte[] request = Serialization.BuildMessage(
+                    MessageCodes.HIGH_SCORE_CODE,
+                    JsonConvert.SerializeObject(new { }));
+
+                Communicator.Send(request);
+                var response = Communicator.Receive();
+
+                if (response.status == MessageCodes.HIGH_SCORE_RESPONSE_CODE)
+                {
+                    var stats = JsonConvert.DeserializeObject<HighScoreResponse>(response.json);
+
+                    TopScores = stats.Scores
+                        .OrderByDescending(s => s.Score)
+                        .Take(10)
+                        .ToList();
+                }
+                else
+                {
+                    MessageBox.Show("Error getting high scores: " + response.json,
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading high scores: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error in LoadScores: {ex}");
+            }
+            finally
+            {
+                if (App.CommunicatorMutex.WaitOne(0))
+                    App.CommunicatorMutex.ReleaseMutex();
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

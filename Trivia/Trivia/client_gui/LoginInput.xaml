@@ -34,7 +34,7 @@
                 MaxWidth="450"
                 MinWidth="400"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Top" Height="745" Margin="0,37,0,0" Grid.RowSpan="3">
+                VerticalAlignment="Top" Height="528" Margin="0,81,0,0" Grid.RowSpan="2" Grid.Row="1">
             <Border.Effect>
                 <DropShadowEffect Color="Black" 
                                 Direction="315" 

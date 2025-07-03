@@ -29,4 +29,5 @@ private:
     sqlite3* m_db;
     std::string m_dbFileName;
     void addDefaultQuestion() const;
+    void initializeDefaultQuestions() const;
 };

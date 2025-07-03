@@ -172,7 +172,234 @@ bool SqliteDatabase::open()
     // if (currentVersion < 3) { ... apply version 3 migrations ... }
 
     std::cout << "All necessary tables are ready." << std::endl;
+
+    initializeDefaultQuestions();
+
     return true;
+}
+
+void SqliteDatabase::initializeDefaultQuestions() const
+{
+    // Check if we already have questions
+    const char* countSql = "SELECT COUNT(*) FROM QUESTIONS;";
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(m_db, countSql, -1, &stmt, nullptr) == SQLITE_OK) {
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int count = sqlite3_column_int(stmt, 0);
+            if (count > 0) {
+                sqlite3_finalize(stmt);
+                std::cout << "Questions already exist in database (" << count << " questions).\n";
+                return;
+            }
+        }
+        sqlite3_finalize(stmt);
+    }
+
+    std::cout << "Initializing database with default questions...\n";
+
+    // Array of default questions to populate the database
+    struct DefaultQuestion {
+        const char* question;
+        const char* correct;
+        const char* wrong1;
+        const char* wrong2;
+        const char* wrong3;
+    };
+
+    DefaultQuestion questions[] = {
+        {
+            "What is the capital of France?",
+            "Paris",
+            "London",
+            "Berlin",
+            "Madrid"
+        },
+        {
+            "Which planet is known as the Red Planet?",
+            "Mars",
+            "Venus",
+            "Jupiter",
+            "Saturn"
+        },
+        {
+            "What is the largest mammal in the world?",
+            "Blue Whale",
+            "Elephant",
+            "Giraffe",
+            "Hippopotamus"
+        },
+        {
+            "In which year did World War II end?",
+            "1945",
+            "1944",
+            "1946",
+            "1943"
+        },
+        {
+            "What is the chemical symbol for gold?",
+            "Au",
+            "Ag",
+            "Fe",
+            "Cu"
+        },
+        {
+            "Which programming language is this project's server written in?",
+            "C++",
+            "Java",
+            "Python",
+            "C#"
+        },
+        {
+            "What is the smallest country in the world?",
+            "Vatican City",
+            "Monaco",
+            "San Marino",
+            "Liechtenstein"
+        },
+        {
+            "Which ocean is the largest?",
+            "Pacific Ocean",
+            "Atlantic Ocean",
+            "Indian Ocean",
+            "Arctic Ocean"
+        },
+        {
+            "What is the hardest natural substance on Earth?",
+            "Diamond",
+            "Quartz",
+            "Steel",
+            "Granite"
+        },
+        {
+            "Which gas makes up about 78% of Earth's atmosphere?",
+            "Nitrogen",
+            "Oxygen",
+            "Carbon Dioxide",
+            "Hydrogen"
+        },
+        {
+            "In which continent is the Sahara Desert located?",
+            "Africa",
+            "Asia",
+            "Australia",
+            "South America"
+        },
+        {
+            "What is the currency of Japan?",
+            "Yen",
+            "Won",
+            "Yuan",
+            "Rupee"
+        },
+        {
+            "Which instrument measures earthquakes?",
+            "Seismograph",
+            "Barometer",
+            "Thermometer",
+            "Anemometer"
+        },
+        {
+            "What is the largest organ in the human body?",
+            "Skin",
+            "Liver",
+            "Brain",
+            "Heart"
+        },
+        {
+            "Which vitamin is produced when skin is exposed to sunlight?",
+            "Vitamin D",
+            "Vitamin C",
+            "Vitamin A",
+            "Vitamin B12"
+        },
+        {
+            "What is the speed of light in a vacuum?",
+            "299,792,458 m/s",
+            "300,000,000 m/s",
+            "299,000,000 m/s",
+            "301,000,000 m/s"
+        },
+        {
+            "Which element has the atomic number 1?",
+            "Hydrogen",
+            "Helium",
+            "Lithium",
+            "Carbon"
+        },
+        {
+            "In which year was the first iPhone released?",
+            "2007",
+            "2006",
+            "2008",
+            "2005"
+        },
+        {
+            "What is the longest river in the world?",
+            "Nile River",
+            "Amazon River",
+            "Yangtze River",
+            "Mississippi River"
+        },
+        {
+            "Which sport is played at Wimbledon?",
+            "Tennis",
+            "Cricket",
+            "Football",
+            "Rugby"
+        }
+    };
+
+    // Insert all questions using transactions for better performance
+    const char* beginTransaction = "BEGIN TRANSACTION;";
+    const char* commitTransaction = "COMMIT;";
+    
+    char* errMsg = nullptr;
+    if (sqlite3_exec(m_db, beginTransaction, nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        std::cerr << "Failed to begin transaction: " << errMsg << std::endl;
+        sqlite3_free(errMsg);
+        return;
+    }
+
+    const char* insertSql = "INSERT INTO QUESTIONS (QUESTION, CORRECT_ANSWER, ANSWER2, ANSWER3, ANSWER4) VALUES (?, ?, ?, ?, ?);";
+    sqlite3_stmt* insertStmt;
+    
+    if (sqlite3_prepare_v2(m_db, insertSql, -1, &insertStmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare insert statement: " << sqlite3_errmsg(m_db) << std::endl;
+        sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+        return;
+    }
+
+    int successCount = 0;
+    int totalQuestions = sizeof(questions) / sizeof(questions[0]);
+
+    for (int i = 0; i < totalQuestions; i++) {
+        // Bind parameters
+        sqlite3_bind_text(insertStmt, 1, questions[i].question, -1, SQLITE_STATIC);
+        sqlite3_bind_text(insertStmt, 2, questions[i].correct, -1, SQLITE_STATIC);
+        sqlite3_bind_text(insertStmt, 3, questions[i].wrong1, -1, SQLITE_STATIC);
+        sqlite3_bind_text(insertStmt, 4, questions[i].wrong2, -1, SQLITE_STATIC);
+        sqlite3_bind_text(insertStmt, 5, questions[i].wrong3, -1, SQLITE_STATIC);
+
+        if (sqlite3_step(insertStmt) == SQLITE_DONE) {
+            successCount++;
+        } else {
+            std::cerr << "Failed to insert question: " << questions[i].question << std::endl;
+        }
+
+        // Reset for next iteration
+        sqlite3_reset(insertStmt);
+    }
+
+    sqlite3_finalize(insertStmt);
+
+    if (sqlite3_exec(m_db, commitTransaction, nullptr, nullptr, &errMsg) != SQLITE_OK) {
+        std::cerr << "Failed to commit transaction: " << errMsg << std::endl;
+        sqlite3_free(errMsg);
+        sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+        return;
+    }
+
+    std::cout << "Successfully added " << successCount << " out of " << totalQuestions << " questions to database.\n";
 }
 
 void SqliteDatabase::close() {
@@ -445,20 +672,14 @@ add_default_question:
 
 void SqliteDatabase::addDefaultQuestion() const
 {
-    const char* sql = "INSERT INTO QUESTIONS (QUESTION, CORRECT_ANSWER, ANSWER2, ANSWER3, ANSWER4) "
-        "VALUES ('What programming language is this project''s server written in?', "
-        "'C++', 'Java', 'Python', 'Ruby');";
-
-    char* errMsg = nullptr;
-    int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);
-
-    if (rc != SQLITE_OK) {
-        std::cerr << "Failed to add default question: " << errMsg << std::endl;
-        sqlite3_free(errMsg);
-    }
-    else {
-        std::cout << "Added default question to database.\n";
-    }
+    std::vector<std::string> wrongAnswers = {"Java", "Python", "Ruby"};
+    
+    // Use the existing addQuestion method for consistency
+    const_cast<SqliteDatabase*>(this)->addQuestion(
+        "What programming language is this project's server written in?",
+        "C++",
+        wrongAnswers
+    );
 }
 
 int SqliteDatabase::getNumOfCorrectAnswers(std::string username) const

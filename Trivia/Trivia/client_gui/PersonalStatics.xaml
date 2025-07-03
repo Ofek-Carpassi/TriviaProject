@@ -5,10 +5,117 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:client_gui"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="PersonalStatics">
+      d:DesignHeight="800" d:DesignWidth="1200"
+      Title="Personal Statistics">
 
-    <Grid>
-        
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                Background="{StaticResource SurfaceBrush}" 
+                Padding="30,20"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Button Content="← Back" 
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource ModernButtonStyle}"
+                        Padding="15,8"
+                        FontSize="14"
+                        Click="BackButton_Click"/>
+
+                <TextBlock Text="Personal Statistics" 
+                          FontSize="28" 
+                          FontWeight="Bold" 
+                          Foreground="{StaticResource TextPrimaryBrush}"
+                          HorizontalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Statistics Content -->
+        <Border Grid.Row="1" 
+                Background="{StaticResource SurfaceBrush}"
+                CornerRadius="16"
+                Margin="40,30"
+                Padding="30">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" 
+                                Direction="315" 
+                                ShadowDepth="3" 
+                                BlurRadius="10" 
+                                Opacity="0.1"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <TextBlock Text="{Binding Username, StringFormat=Player: {0}}"
+                          FontSize="24"
+                          FontWeight="Bold"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,30"/>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Games Played:"
+                             FontSize="18"
+                             FontWeight="Medium"/>
+                    <TextBlock Grid.Column="1"
+                             Text="{Binding GamesPlayed}"
+                             FontSize="18"
+                             FontWeight="Bold"
+                             Foreground="{StaticResource PrimaryBrush}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Correct Answers:"
+                             FontSize="18"
+                             FontWeight="Medium"/>
+                    <TextBlock Grid.Column="1"
+                             Text="{Binding CorrectAnswers}"
+                             FontSize="18"
+                             FontWeight="Bold"
+                             Foreground="{StaticResource SecondaryBrush}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Wrong Answers:"
+                             FontSize="18"
+                             FontWeight="Medium"/>
+                    <TextBlock Grid.Column="1"
+                             Text="{Binding WrongAnswers}"
+                             FontSize="18"
+                             FontWeight="Bold"
+                             Foreground="{StaticResource AccentBrush}"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Average Answer Time:"
+                             FontSize="18"
+                             FontWeight="Medium"/>
+                    <TextBlock Grid.Column="1"
+                             Text="{Binding AverageAnswerTime, StringFormat={}{0:F1} seconds}"
+                             FontSize="18"
+                             FontWeight="Bold"/>
+                </Grid>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

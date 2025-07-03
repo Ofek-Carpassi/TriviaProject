@@ -16,13 +16,13 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
-                
+
                 <Border Grid.Row="1" 
                         Background="{StaticResource SurfaceBrush}" 
                         CornerRadius="16" 
                         Padding="50,40"
                         MaxWidth="500"
-                        HorizontalAlignment="Center">
+                        HorizontalAlignment="Center" Margin="0,80,0,80" Width="504" Grid.RowSpan="2">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" 
                                           Direction="315" 
@@ -30,7 +30,7 @@
                                           BlurRadius="15" 
                                           Opacity="0.1"/>
                     </Border.Effect>
-                    
+
                     <StackPanel>
                         <TextBlock Text="Join the Game!" 
                                    FontSize="32" 
@@ -38,7 +38,7 @@
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    HorizontalAlignment="Center" 
                                    Margin="0,0,0,40"/>
-                        
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -54,13 +54,13 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            
+
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Username" Style="{StaticResource ModernLabelStyle}"/>
                             <TextBox Grid.Row="0" Grid.Column="1" x:Name="UsernameBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Username"/>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="Password" Style="{StaticResource ModernLabelStyle}"/>
                             <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="PasswordBox" Style="{StaticResource ModernPasswordBoxStyle}" ToolTip="Password must have at least 8 characters with uppercase, lowercase, digit, and special character"/>
-                            
+
                             <TextBlock Grid.Row="2" Grid.Column="0" Text="Email" Style="{StaticResource ModernLabelStyle}"/>
                             <TextBox Grid.Row="2" Grid.Column="1" x:Name="EmailBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Email format: name@domain.com"/>
 
@@ -75,7 +75,7 @@
 
                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Phone" Style="{StaticResource ModernLabelStyle}"/>
                             <TextBox Grid.Row="6" Grid.Column="1" x:Name="PhoneBox" Style="{StaticResource ModernTextBoxStyle}" ToolTip="Phone format: Starts with 0 followed by 2-3 digit prefix and 7 digits"/>
-                            
+
                             <TextBlock Grid.Row="7" Grid.Column="0" 
                                     Text="Birth Date" 
                                     Style="{StaticResource ModernLabelStyle}"/>
@@ -86,7 +86,7 @@
                                     Text="15/06/1990"/>
 
                         </Grid>
-                        
+
                         <Button Content="Create Account" 
                                 Height="55" 
                                 FontSize="18"

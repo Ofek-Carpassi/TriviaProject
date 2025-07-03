@@ -202,7 +202,22 @@ namespace client_gui
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new loginChoice());
+            // Navigate back to login choice within the main window
+            if (NavigationService != null)
+            {
+                NavigationService.Navigate(new loginChoice());
+            }
+            else
+            {
+                // Fallback: Access MainWindow's frame directly
+                if (Application.Current.MainWindow is MainWindow mainWindow)
+                {
+                    var loginChoiceControl = new loginChoice();
+                    // We need to wire up the event handler again
+                    loginChoiceControl.eventOfChoice += mainWindow.OnLoginChoice;
+                    mainWindow.frame1.Navigate(loginChoiceControl);
+                }
+            }
         }
     }
 

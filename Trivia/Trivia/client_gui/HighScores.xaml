@@ -8,12 +8,16 @@
       d:DesignHeight="800" d:DesignWidth="1200"
       Title="High Scores">
 
+    <Page.Resources>
+        <local:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+    </Page.Resources>
+
     <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Header -->
         <Border Grid.Row="0" 
                 Background="{StaticResource SurfaceBrush}" 
@@ -28,7 +32,7 @@
                        Padding="15,8"
                        FontSize="14"
                        Click="BackButton_Click"/>
-                
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="🏆" FontSize="28" VerticalAlignment="Center" Margin="0,0,15,0"/>
                     <TextBlock Text="Leaderboard" 
@@ -39,7 +43,7 @@
                 </StackPanel>
             </Grid>
         </Border>
-        
+
         <!-- High Scores Content -->
         <ScrollViewer Grid.Row="1" 
                      VerticalScrollBarVisibility="Auto"
@@ -55,7 +59,7 @@
                                     BlurRadius="10" 
                                     Opacity="0.1"/>
                 </Border.Effect>
-                
+
                 <StackPanel>
                     <TextBlock Text="🌟 Top Players" 
                               FontSize="24" 
@@ -63,8 +67,8 @@
                               Foreground="{StaticResource TextPrimaryBrush}"
                               HorizontalAlignment="Center" 
                               Margin="0,0,0,30"/>
-                    
-                    <ItemsControl ItemsSource="{Binding TopScores}">
+
+                    <ItemsControl x:Name="ScoresList" ItemsSource="{Binding TopScores}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="{StaticResource BackgroundBrush}"
@@ -75,70 +79,59 @@
                                        BorderThickness="1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="60"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        
-                                        <!-- Rank - calculated based on position -->
-                                        <TextBlock Grid.Column="0" 
-                                                  FontSize="20"
-                                                  FontWeight="Bold"
-                                                  Foreground="{StaticResource PrimaryBrush}"
-                                                  VerticalAlignment="Center"
-                                                  Margin="0,0,20,0">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="#{0}">
-                                                    <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" 
-                                                           Path="ItemsSource" 
-                                                           Converter="{StaticResource IndexConverter}" 
-                                                           ConverterParameter="{Binding}"/>
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                        
-                                        <TextBlock Grid.Column="1" 
-                                                  Text="{Binding Username}" 
-                                                  FontSize="18"
-                                                  FontWeight="Medium"
-                                                  Foreground="{StaticResource TextPrimaryBrush}"
-                                                  VerticalAlignment="Center"/>
-                                        
-                                        <TextBlock Grid.Column="2" 
-                                                  Text="{Binding Score}" 
-                                                  FontSize="20"
-                                                  FontWeight="Bold"
-                                                  Foreground="{StaticResource SecondaryBrush}"
-                                                  VerticalAlignment="Center"/>
+                                        <!-- Just leave the rank column empty or put a static # if you want -->
+                                        <TextBlock Grid.Column="0"
+                                           Text=""
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryBrush}"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,20,0"/>
+                                        <TextBlock Grid.Column="1"
+                                           Text="{Binding Username}"
+                                           FontSize="18"
+                                           FontWeight="Medium"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2"
+                                           Text="{Binding Score}"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource SecondaryBrush}"
+                                           VerticalAlignment="Center"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    
+
                     <!-- Message when no scores available -->
-                    <Border x:Name="NoScoresMessage" 
-                           Visibility="Collapsed"
+                    <Border x:Name="NoScoresMessage"
+                           Visibility="{Binding TopScores.Count, Converter={StaticResource IntToVisibilityConverter}}"
                            Background="{StaticResource BackgroundBrush}"
                            CornerRadius="8"
                            Padding="30,20"
                            Margin="0,20,0,0">
                         <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="📊" 
-                                      FontSize="48" 
-                                      HorizontalAlignment="Center" 
-                                      Margin="0,0,0,15"/>
-                            <TextBlock Text="No scores yet" 
-                                      FontSize="20" 
-                                      FontWeight="Bold"
-                                      Foreground="{StaticResource TextPrimaryBrush}"
-                                      HorizontalAlignment="Center" 
-                                      Margin="0,0,0,10"/>
-                            <TextBlock Text="Play some games to see your stats here!" 
-                                      FontSize="14" 
-                                      Foreground="{StaticResource TextSecondaryBrush}"
-                                      HorizontalAlignment="Center"
-                                      TextAlignment="Center"/>
+                            <TextBlock Text="📊"
+                                FontSize="48"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,15"/>
+                            <TextBlock Text="No scores yet"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource TextPrimaryBrush}"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,10"/>
+                            <TextBlock Text="Play some games to see your stats here!"
+                                FontSize="14"
+                                Foreground="{StaticResource TextSecondaryBrush}"
+                                HorizontalAlignment="Center"
+                                TextAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
